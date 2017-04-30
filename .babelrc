@@ -1,0 +1,25 @@
+{
+    "env": {
+        "test": {
+            "plugins": [
+                "transform-es2015-modules-commonjs",
+            ]
+        }
+    },
+    "plugins": [
+        "transform-flow-strip-types"
+    ],
+    "presets": [
+        [
+            "env",
+            {
+                "targets": {
+                    "browsers": [
+                        "last 2 versions",
+                        "safari >= 7"
+                    ]
+                }
+            }
+        ]
+    ]
+}
