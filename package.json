@@ -5,7 +5,8 @@
   "main": "dist/index.js",
   "scripts": {
     "test": "jest ./src",
-    "dev": "webpack --config webpack.config.dev.js",
+    "dev": "watch \"npm run flow status && npm run lint && npm run test\" ./src",
+    "build:dev": "webpack --config webpack.config.dev.js",
     "build": "webpack --config webpack.config.prod.js -p",
     "lint": "eslint ./src",
     "flow": "flow"
@@ -26,6 +27,7 @@
     "eslint-plugin-import": "2.2.0",
     "flow-bin": "0.45.0",
     "jest": "19.0.2",
+    "watch": "1.0.2",
     "webpack": "2.4.1"
   }
 }

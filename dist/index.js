@@ -85,13 +85,15 @@ var demo = function demo() {
     var Unused = function () {
         function Unused() {
             _classCallCheck(this, Unused);
+
+            this.text = "Demo!";
         }
 
         _createClass(Unused, [{
             key: "method",
             value: function method() {
                 return Object.assign({}, {
-                    demo: "Demo!"
+                    demo: this.text
                 });
             }
         }]);
@@ -103,6 +105,15 @@ var demo = function demo() {
 
     return instance.method();
 };
+
+function foo(x) {
+    if (x) {
+        return x.toString();
+    }
+    return "default string";
+}
+
+foo(1);
 
 exports.default = demo;
 
