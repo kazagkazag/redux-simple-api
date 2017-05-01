@@ -1,0 +1,12 @@
+test("call start action and success action", () => {});
+test("call start action and fail action", () => {});
+test("handle status code response", () => {});
+test("handle text response", () => {});
+test("handle json response", () => {});
+test("handle custom data transformation", () => {});
+test("handle request transformation", () => {});
+test("take latest request", () => {});
+test("debounce requests for specified time", () => {});
+test("throttle requests for specified time", () => {});
+test("chain multiple actions if they succeed", () => {});
+test("chain multiple actions and catch error if one of them failed", () => {});
