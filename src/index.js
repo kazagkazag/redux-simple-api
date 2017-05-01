@@ -1,3 +1,7 @@
-import demo from "./demo";
+import buildRequestActionCreator from "./actionCreatorsBuilders/buildRequestActionCreator";
+import buildSyncActionCreator from "./actionCreatorsBuilders/buildSyncActionCreator";
 
-console.log(demo().demo);
+export default {
+    buildRequestActionCreator,
+    buildSyncActionCreator
+};
