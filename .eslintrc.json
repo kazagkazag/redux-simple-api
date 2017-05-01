@@ -1,13 +1,31 @@
 {
-    "extends": ["airbnb-base", "airbnb-flow"],
+    "extends": [
+        "airbnb-base",
+        "airbnb-flow"
+    ],
     "plugins": [
         "import",
         "flowtype"
     ],
     "rules": {
-        "quotes": ["error", "double"],
-        "indent": ["error", 4],
-        "comma-dangle": ["error", "never"]
+        "quotes": [
+            "error",
+            "double"
+        ],
+        "indent": [
+            "error",
+            4
+        ],
+        "comma-dangle": [
+            "error",
+            "never"
+        ],
+        "import/no-extraneous-dependencies": [
+            "error",
+            {
+                "devDependencies": true
+            }
+        ]
     },
     "env": {
         "jest": true

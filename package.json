@@ -26,6 +26,7 @@
     "eslint-plugin-flowtype": "2.32.1",
     "eslint-plugin-import": "2.2.0",
     "flow-bin": "0.45.0",
+    "flux-standard-action": "1.2.0",
     "jest": "19.0.2",
     "watch": "1.0.2",
     "webpack": "2.4.1"
