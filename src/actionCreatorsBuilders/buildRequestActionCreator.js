@@ -9,6 +9,7 @@ export default function buildRequestActionCreator(config: Object): Function {
         startSuffix,
         successSuffix,
         failSuffix,
+        promisifyError,
         ...axiosConfig
     } = getOptions(config);
 
@@ -27,10 +28,12 @@ export default function buildRequestActionCreator(config: Object): Function {
     return (dispatch: Function) => {
         dispatch(actions.start());
 
+        const defaultErrorHandler = error => dispatch(actions.fail(error));
+
         return axios
             .request(axiosConfig)
             .then(response => dispatch(actions.success(response)))
-            .catch(error => dispatch(actions.fail(error)));
+            .catch(getErrorHandler(promisifyError, defaultErrorHandler));
     };
 }
 
@@ -42,7 +45,8 @@ function getOptions(config: Object): Object {
         successSuffix: config.successSuffix || "/done",
         url: config.url || "/defaultUrl",
         baseURL: getBaseURL(config.baseURL),
-        method: config.method || "get"
+        method: config.method || "get",
+        promisifyError: config.promisifyError
     };
 }
 
@@ -54,4 +58,13 @@ function getDefaultBaseURL() {
     return process.env.NODE_ENV === "test"
         ? "http://localhost"
         : "http://baseUrlNotProvided";
+}
+
+function getErrorHandler(promisifyError, defaultErrorHandler) {
+    return promisifyError
+        ? function returnError(error) {
+            defaultErrorHandler(error);
+            return Promise.reject(error);
+        }
+        : defaultErrorHandler;
 }

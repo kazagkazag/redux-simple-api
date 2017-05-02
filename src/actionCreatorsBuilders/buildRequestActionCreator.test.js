@@ -4,6 +4,7 @@ import nock from "nock";
 import axios from "axios";
 import httpAdapter from "axios/lib/adapters/http";
 import buildRequestActionCreator from "./buildRequestActionCreator";
+import { areActionsInOrder } from "../../tools/testUtils";
 
 describe("buildRequestActionCreator", () => {
     const middlewares = [thunk];
@@ -69,6 +70,85 @@ describe("buildRequestActionCreator", () => {
                 expect(actions.find(action => action.type === failType)).not.toBe(undefined);
             });
     });
+
+    test("chains multiple actions if they succeed", () => {
+        nock(host)
+            .get("/test1")
+            .reply(200);
+
+        nock(host)
+            .get("/test2")
+            .reply(200);
+
+        const actionCreator = () => buildRequestActionCreator({
+            baseType,
+            url: "/test1",
+            baseURL: host
+        });
+
+        const nextActionCreator = () => buildRequestActionCreator({
+            baseType: `${baseType}/next`,
+            url: "/test2",
+            baseURL: host
+        });
+
+        const combinedActions = () => dispatch =>
+            dispatch(actionCreator())
+                .then(() => dispatch(nextActionCreator()));
+
+        return store
+            .dispatch(combinedActions())
+            .then(() => {
+                const actions = store.getActions();
+
+                expect(areActionsInOrder(actions, [
+                    baseType,
+                    successType,
+                    `${baseType}/next`,
+                    `${baseType}/next${successSuffix}`
+                ])).toBeTruthy();
+            });
+    });
+
+    test("chains multiple actions and catch error if one of them failed", () => {
+        nock(host)
+            .get("/test1")
+            .reply(400);
+
+        nock(host)
+            .get("/test2")
+            .reply(200);
+
+        const actionCreator = () => buildRequestActionCreator({
+            baseType,
+            url: "/test1",
+            baseURL: host,
+            promisifyError: true
+        });
+
+        const nextActionCreator = () => buildRequestActionCreator({
+            baseType: `${baseType}/next`,
+            url: "/test2",
+            baseURL: host
+        });
+
+        const combinedActions = () => dispatch =>
+            dispatch(actionCreator())
+                .catch(() => dispatch(nextActionCreator()));
+
+        return store
+            .dispatch(combinedActions())
+            .then(() => {
+                const actions = store.getActions();
+
+                expect(areActionsInOrder(actions, [
+                    baseType,
+                    failType,
+                    `${baseType}/next`,
+                    `${baseType}/next${successSuffix}`
+                ])).toBeTruthy();
+            });
+    });
     test("handles status code response", () => {
     });
     test("handles text response", () => {
@@ -84,9 +164,5 @@ describe("buildRequestActionCreator", () => {
     test("debounces requests for specified time", () => {
     });
     test("throttles requests for specified time", () => {
-    });
-    test("chains multiple actions if they succeed", () => {
-    });
-    test("chains multiple actions and catch error if one of them failed", () => {
     });
 });
