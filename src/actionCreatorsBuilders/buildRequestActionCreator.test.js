@@ -149,15 +149,63 @@ describe("buildRequestActionCreator", () => {
                 ])).toBeTruthy();
             });
     });
-    test("handles status code response", () => {
+    test("handles status code response of succeeded request", () => {
+        nock(host)
+            .get("/test")
+            .reply(200);
+
+        const actionCreator = () => buildRequestActionCreator({
+            baseType,
+            url: "/test",
+            baseURL: host
+        });
+
+        return store
+            .dispatch(actionCreator())
+            .then(() => {
+                const actions = store.getActions();
+
+                expect(areActionsInOrder(actions, [
+                    baseType,
+                    successType
+                ])).toBeTruthy();
+
+                expect(actions.find(action => action.type === successType).payload.status)
+                    .toBe(200);
+                expect(actions.find(action => action.type === successType).payload.data)
+                    .toBe("");
+            });
     });
+
+    test("handles status code response of failed request", () => {
+        nock(host)
+            .get("/test")
+            .reply(400);
+
+        const actionCreator = () => buildRequestActionCreator({
+            baseType,
+            url: "/test",
+            baseURL: host
+        });
+
+        return store
+            .dispatch(actionCreator())
+            .then(() => {
+                const actions = store.getActions();
+
+                expect(areActionsInOrder(actions, [
+                    baseType,
+                    failType
+                ])).toBeTruthy();
+
+                expect(actions.find(action => action.type === failType).payload.message).toContain("400");
+                expect(actions.find(action => action.type === failType).error).toBe(true);
+            });
+    });
+
     test("handles text response", () => {
     });
     test("handles json response", () => {
-    });
-    test("handles custom data transformation", () => {
-    });
-    test("handles request transformation", () => {
     });
     test("takes latest request", () => {
     });

@@ -13,17 +13,11 @@ export default function buildRequestActionCreator(config: Object): Function {
         ...axiosConfig
     } = getOptions(config);
 
-    const types = {
-        start: `${baseType}${startSuffix}`,
-        success: `${baseType}${successSuffix}`,
-        fail: `${baseType}${failSuffix}`
-    };
-
-    const actions = {
-        start: buildSyncActionCreator(types.start),
-        success: buildSyncActionCreator(types.success, "data"),
-        fail: buildSyncActionCreator(types.fail, "error")
-    };
+    const actions = getActions(baseType, {
+        startSuffix,
+        successSuffix,
+        failSuffix
+    });
 
     return (dispatch: Function) => {
         dispatch(actions.start());
@@ -32,8 +26,26 @@ export default function buildRequestActionCreator(config: Object): Function {
 
         return axios
             .request(axiosConfig)
-            .then(response => dispatch(actions.success(response)))
+            .then(response => dispatch(actions.success(response.data, response.status)))
             .catch(getErrorHandler(promisifyError, defaultErrorHandler));
+    };
+}
+
+function getActions(baseType: string, suffixes: Object): Object {
+    const types = {
+        start: `${baseType}${suffixes.startSuffix}`,
+        success: `${baseType}${suffixes.successSuffix}`,
+        fail: `${baseType}${suffixes.failSuffix}`
+    };
+
+    return {
+        start: buildSyncActionCreator(types.start),
+        success: buildSyncActionCreator(types.success, "data", "status"),
+        fail: error => ({
+            type: types.fail,
+            payload: error,
+            error: true
+        })
     };
 }
 
