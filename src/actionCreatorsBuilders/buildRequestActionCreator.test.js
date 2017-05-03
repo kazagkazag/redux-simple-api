@@ -164,16 +164,15 @@ describe("buildRequestActionCreator", () => {
             .dispatch(actionCreator())
             .then(() => {
                 const actions = store.getActions();
+                const successAction = actions.find(action => action.type === successType);
 
                 expect(areActionsInOrder(actions, [
                     baseType,
                     successType
                 ])).toBeTruthy();
 
-                expect(actions.find(action => action.type === successType).payload.status)
-                    .toBe(200);
-                expect(actions.find(action => action.type === successType).payload.data)
-                    .toBe("");
+                expect(successAction.payload.status).toBe(200);
+                expect(successAction.payload.data).toBe("");
             });
     });
 
@@ -192,21 +191,100 @@ describe("buildRequestActionCreator", () => {
             .dispatch(actionCreator())
             .then(() => {
                 const actions = store.getActions();
+                const failAction = actions.find(action => action.type === failType);
 
                 expect(areActionsInOrder(actions, [
                     baseType,
                     failType
                 ])).toBeTruthy();
 
-                expect(actions.find(action => action.type === failType).payload.message).toContain("400");
-                expect(actions.find(action => action.type === failType).error).toBe(true);
+                expect(failAction.payload.message).toContain("400");
+                expect(failAction.error).toBe(true);
             });
     });
 
-    test("handles text response", () => {
+    test("handles text response of succeeded request", () => {
+        nock(host)
+            .get("/test")
+            .reply(200, "test response");
+
+        const actionCreator = () => buildRequestActionCreator({
+            baseType,
+            url: "/test",
+            baseURL: host
+        });
+
+        return store
+            .dispatch(actionCreator())
+            .then(() => {
+                const actions = store.getActions();
+                const successAction = actions.find(action => action.type === successType);
+
+                expect(areActionsInOrder(actions, [
+                    baseType,
+                    successType
+                ])).toBeTruthy();
+
+                expect(successAction.payload.status).toBe(200);
+                expect(successAction.payload.data).toBe("test response");
+            });
     });
-    test("handles json response", () => {
+
+    test("handles json response of succeeded request", () => {
+        nock(host)
+            .get("/test")
+            .reply(200, { a: 1 });
+
+        const actionCreator = () => buildRequestActionCreator({
+            baseType,
+            url: "/test",
+            baseURL: host
+        });
+
+        return store
+            .dispatch(actionCreator())
+            .then(() => {
+                const actions = store.getActions();
+                const successAction = actions.find(action => action.type === successType);
+
+                expect(areActionsInOrder(actions, [
+                    baseType,
+                    successType
+                ])).toBeTruthy();
+
+                expect(successAction.payload.status).toBe(200);
+                expect(successAction.payload.data).toEqual({ a: 1 });
+            });
     });
+
+    test("handles json response of failed request", () => {
+        nock(host)
+            .get("/test")
+            .reply(400, { a: 1 });
+
+        const actionCreator = () => buildRequestActionCreator({
+            baseType,
+            url: "/test",
+            baseURL: host
+        });
+
+        return store
+            .dispatch(actionCreator())
+            .then(() => {
+                const actions = store.getActions();
+                const failAction = actions.find(action => action.type === failType);
+
+                expect(areActionsInOrder(actions, [
+                    baseType,
+                    failType
+                ])).toBeTruthy();
+
+                expect(failAction.payload.message).toContain("400");
+                expect(failAction.payload.response.data).toEqual({ a: 1 });
+                expect(failAction.error).toBe(true);
+            });
+    });
+
     test("takes latest request", () => {
     });
     test("debounces requests for specified time", () => {
