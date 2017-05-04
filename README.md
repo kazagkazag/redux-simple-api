@@ -222,41 +222,42 @@ and `clearPosts` before unmount. Thanks to that:
         Notice suffixes, we specified them in RSA `init()`, so every request action
         will have them now.
     * after `user/data/done` in our root reducer we will have some data:
-```js
-{
-    users: {
-        pending: false,
-        done: true,
-        data: { data }, //any data returned from the backend 
-        error: null
-    },
-    posts: {
-        pending: false,
-        done: false,
-        data: null, 
-        error: null
+    
+    ```js
+    {
+        users: {
+            pending: false,
+            done: true,
+            data: { data }, //any data returned from the backend 
+            error: null
+        },
+        posts: {
+            pending: false,
+            done: false,
+            data: null, 
+            error: null
+        }
     }
-}
-```
+    ```
 
     * after `posts/all/done` our store will look like this:
      
-```js
-{
-    users: {
-        pending: false,
-        done: true,
-        data: { data }, //any data returned from the backend 
-        error: null
-    },
-    posts: {
-        pending: false,
-        done: true,
-        data: { data }, //any data returned from the backend 
-        error: null
+    ```js
+    {
+        users: {
+            pending: false,
+            done: true,
+            data: { data }, //any data returned from the backend 
+            error: null
+        },
+        posts: {
+            pending: false,
+            done: true,
+            data: { data }, //any data returned from the backend 
+            error: null
+        }
     }
-}
-```
+    ```
 
     * or if fetching posts request will fail, we would end up with following actions chain:
         * `user/data/start` 
@@ -270,19 +271,19 @@ and `clearPosts` before unmount. Thanks to that:
     part of the `posts` reducer. Result:
     
 
-```js
-{
-    users: {
-        pending: false,
-        done: true,
-        data: { data }, // any data returned from the backend 
-        error: null
-    },
-    posts: {
-        pending: false,
-        done: true,
-        data: null, // returned initial state of the reducer
-        error: null
+    ```js
+    {
+        users: {
+            pending: false,
+            done: true,
+            data: { data }, // any data returned from the backend 
+            error: null
+        },
+        posts: {
+            pending: false,
+            done: true,
+            data: null, // returned initial state of the reducer
+            error: null
+        }
     }
-}
-```
+    ```
