@@ -4,6 +4,7 @@ import nock from "nock";
 import axios from "axios";
 import httpAdapter from "axios/lib/adapters/http";
 import buildRequestActionCreator from "./buildRequestActionCreator";
+import init from "../core/init";
 import { areActionsInOrder } from "../../tools/testUtils";
 
 describe("buildRequestActionCreator", () => {
@@ -21,6 +22,7 @@ describe("buildRequestActionCreator", () => {
 
     beforeEach(() => {
         store.clearActions();
+        init();
     });
 
     afterEach(() => {
@@ -290,5 +292,52 @@ describe("buildRequestActionCreator", () => {
     test("debounces requests for specified time", () => {
     });
     test("throttles requests for specified time", () => {
+    });
+
+    test("should apply 'before request' hook with access to the request config, dispatch and getState", () => {
+        const noop = jest.fn();
+        const header = "test header";
+
+        init({
+            beforeRequest: (reqConfig, dispatch, getState) => {
+                const newConfig = { ...reqConfig };
+                newConfig.headers = {
+                    "custom-header": header
+                };
+                noop(newConfig, dispatch, getState);
+                return newConfig;
+            }
+        });
+
+        nock(host,
+            {
+                reqheaders: {
+                    "custom-header": header
+                }
+            })
+            .get("/test")
+            .reply(200);
+
+        const actionCreator = () => buildRequestActionCreator({
+            baseType,
+            url: "/test",
+            baseURL: host
+        });
+
+        return store
+            .dispatch(actionCreator())
+            .then(() => {
+                const actions = store.getActions();
+                const args = noop.mock.calls[0];
+
+                expect(areActionsInOrder(actions, [
+                    baseType,
+                    successType
+                ])).toBeTruthy();
+
+                expect(args[0].headers["custom-header"]).toBe(header);
+                expect(typeof args[1]).toBe("function");
+                expect(typeof args[2]).toBe("function");
+            });
     });
 });

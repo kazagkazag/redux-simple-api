@@ -2,8 +2,9 @@
 
 import axios from "axios";
 import buildSyncActionCreator from "./buildSyncActionCreator";
+import rsaConfig from "../core/config";
 
-export default function buildRequestActionCreator(config: Object): Function {
+export default function buildRequestActionCreator(requestConfig: Object): Function {
     const {
         baseType,
         startSuffix,
@@ -11,7 +12,7 @@ export default function buildRequestActionCreator(config: Object): Function {
         failSuffix,
         promisifyError,
         ...axiosConfig
-    } = getOptions(config);
+    } = getOptions(requestConfig);
 
     const actions = getActions(baseType, {
         startSuffix,
@@ -19,13 +20,14 @@ export default function buildRequestActionCreator(config: Object): Function {
         failSuffix
     });
 
-    return (dispatch: Function) => {
+    return (dispatch: Function, getState: Function) => {
         dispatch(actions.start());
 
         const defaultErrorHandler = error => dispatch(actions.fail(error));
+        const transformedConfig = rsaConfig.get().beforeRequest(axiosConfig, dispatch, getState);
 
         return axios
-            .request(axiosConfig)
+            .request(transformedConfig)
             .then(response => dispatch(actions.success(response.data, response.status)))
             .catch(getErrorHandler(promisifyError, defaultErrorHandler));
     };
