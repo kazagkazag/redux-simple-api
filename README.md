@@ -14,6 +14,8 @@ we wan't to add suffixes to all request actions: `/start`, `/done` and `/failed`
 token saved previously in our redux store
 * after every response, we have to get new `SESSION-TOKEN` and save it in
 the redux store
+* every failed request could have some data with details from the backend in JSON
+format, so we have to save those details
 * after App mount, we would like to fetch user data, users posts and if any of those request
 failed, we have to logout user
 * moreover, we wan't to clear list of posts before App unmount
@@ -50,6 +52,7 @@ import { Router, browserHistory } from "react-router";
 import {init} from "redux-simple-api"; // something new...
 import getRoutes from "./routes";
 import store from "./store";
+import transformErrorDataToReadableForm from "my/utils/errors";
 
 import "./styles/app.scss";
 
@@ -65,6 +68,9 @@ init({
                 token: response.headers["SESSION-TOKEN"]
             }
         });
+    },
+    afterFailedRequest: function (response) {
+        return transformErrorDataToReadableForm(response); //custom transformation will return JSON from error
     },
     suffixes: {
         start: "/start",
@@ -167,7 +173,7 @@ class App extends Component {
     }
     
     componentWillUnmount() {
-        this.props.clearPosts();
+        this.props.clearUserPosts();
     }
     
     render() {
@@ -186,7 +192,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
     return {
         initializeDashboard: compose(dispatch, initializeDashboard),
-        clearPosts: compose(dispatch, clearPosts)
+        clearUserPosts: compose(dispatch, clearUserPosts)
     };  
 }
 
@@ -212,6 +218,7 @@ and `clearPosts` before unmount. Thanks to that:
         * `user/data/done` 
         * `posts/all/start` 
         * `posts/all/done`
+        
         Notice suffixes, we specified them in RSA `init()`, so every request action
         will have them now.
     * after `user/data/done` in our root reducer we will have some data:
@@ -227,6 +234,54 @@ and `clearPosts` before unmount. Thanks to that:
         pending: false,
         done: false,
         data: null, 
+        error: null
+    }
+}
+```
+
+    * after `posts/all/done` our store will look like this:
+     
+```js
+{
+    users: {
+        pending: false,
+        done: true,
+        data: { data }, //any data returned from the backend 
+        error: null
+    },
+    posts: {
+        pending: false,
+        done: true,
+        data: { data }, //any data returned from the backend 
+        error: null
+    }
+}
+```
+
+    * or if fetching posts request will fail, we would end up with following actions chain:
+        * `user/data/start` 
+        * `user/data/done` 
+        * `posts/all/start` 
+        * `posts/all/failed`
+        * `user/logout/start`
+        * `user/logout/done`
+        
+    * before unmount App will dispatch `clearUsersPosts` action, that will clear only `data`
+    part of the `posts` reducer. Result:
+    
+
+```js
+{
+    users: {
+        pending: false,
+        done: true,
+        data: { data }, // any data returned from the backend 
+        error: null
+    },
+    posts: {
+        pending: false,
+        done: true,
+        data: null, // returned initial state of the reducer
         error: null
     }
 }
