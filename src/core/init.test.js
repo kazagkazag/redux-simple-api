@@ -27,34 +27,34 @@ test("should set before request hook in the config", () => {
 });
 
 test("should set after response hook in the config", () => {
-    const afterResponse = function spy() {
+    const onResponse = function spy() {
     };
 
     init({
-        afterResponse
+        onResponse
     });
 
-    expect(config.get().afterResponse).toEqual(afterResponse);
+    expect(config.get().onResponse).toEqual(onResponse);
 });
 
 test("should set 'after failed request' hook in the config", () => {
-    const afterFailedRequest = function spy() {
+    const onError = function spy() {
     };
 
     init({
-        afterFailedRequest
+        onError
     });
 
-    expect(config.get().afterFailedRequest).toEqual(afterFailedRequest);
+    expect(config.get().onError).toEqual(onError);
 });
 
 test("should set 'after succeeded request' hook in the config", () => {
-    const afterSucceededRequest = function spy() {
+    const onSuccess = function spy() {
     };
 
     init({
-        afterSucceededRequest
+        onSuccess
     });
 
-    expect(config.get().afterSucceededRequest).toEqual(afterSucceededRequest);
+    expect(config.get().onSuccess).toEqual(onSuccess);
 });

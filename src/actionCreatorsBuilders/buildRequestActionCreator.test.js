@@ -340,4 +340,44 @@ describe("buildRequestActionCreator", () => {
                 expect(typeof args[2]).toBe("function");
             });
     });
+
+    test("should apply 'onResponse' hook with access to the response, dispatch and getState", () => {
+        const noop = jest.fn();
+        const header = "test header";
+
+        init({
+            onResponse: (response, dispatch, getState) => {
+                noop(response, dispatch, getState);
+                return response;
+            }
+        });
+
+        nock(host)
+            .get("/test")
+            .reply(200, "test", {
+                "custom-header": header
+            });
+
+        const actionCreator = () => buildRequestActionCreator({
+            baseType,
+            url: "/test",
+            baseURL: host
+        });
+
+        return store
+            .dispatch(actionCreator())
+            .then(() => {
+                const actions = store.getActions();
+                const args = noop.mock.calls[0];
+
+                expect(areActionsInOrder(actions, [
+                    baseType,
+                    successType
+                ])).toBeTruthy();
+
+                expect(args[0].headers["custom-header"]).toBe(header);
+                expect(typeof args[1]).toBe("function");
+                expect(typeof args[2]).toBe("function");
+            });
+    });
 });

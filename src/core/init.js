@@ -4,9 +4,9 @@ import config from "./config";
 export default function init(providedOptions: Object = {}): void {
     const defaults = {
         beforeRequest: request => request,
-        afterResponse: response => response,
-        afterFailedRequest: response => response,
-        afterSucceededRequest: response => response,
+        onResponse: response => response,
+        onError: response => response,
+        onSuccess: response => response,
         suffixes: {
             start: "",
             success: "",
@@ -15,10 +15,10 @@ export default function init(providedOptions: Object = {}): void {
     };
     const options = {
         beforeRequest: providedOptions.beforeRequest || defaults.beforeRequest,
-        afterResponse: providedOptions.afterResponse || defaults.afterResponse,
-        afterFailedRequest: providedOptions.afterFailedRequest || defaults.afterFailedRequest,
-        afterSucceededRequest: providedOptions.afterSucceededRequest
-            || defaults.afterSucceededRequest,
+        onResponse: providedOptions.onResponse || defaults.onResponse,
+        onError: providedOptions.onError || defaults.onError,
+        onSuccess: providedOptions.onSuccess
+            || defaults.onSuccess,
         suffixes: {
             ...defaults.suffixes,
             ...providedOptions.suffixes

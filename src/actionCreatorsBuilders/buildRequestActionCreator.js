@@ -28,6 +28,7 @@ export default function buildRequestActionCreator(requestConfig: Object): Functi
 
         return axios
             .request(transformedConfig)
+            .then(response => rsaConfig.get().onResponse(response, dispatch, getState))
             .then(response => dispatch(actions.success(response.data, response.status)))
             .catch(getErrorHandler(promisifyError, defaultErrorHandler));
     };
