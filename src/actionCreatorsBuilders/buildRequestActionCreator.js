@@ -25,12 +25,15 @@ export default function buildRequestActionCreator(requestConfig: Object): Functi
 
         const defaultErrorHandler = error => dispatch(actions.fail(error));
         const transformedConfig = rsaConfig.get().beforeRequest(axiosConfig, dispatch, getState);
+        const errorTransformation = error =>
+            rsaConfig.get().onError.call(null, error, dispatch, getState);
 
         return axios
             .request(transformedConfig)
             .then(response => rsaConfig.get().onResponse(response, dispatch, getState))
+            .then(response => rsaConfig.get().onSuccess(response, dispatch, getState))
             .then(response => dispatch(actions.success(response.data, response.status)))
-            .catch(getErrorHandler(promisifyError, defaultErrorHandler));
+            .catch(getErrorHandler(promisifyError, defaultErrorHandler, errorTransformation));
     };
 }
 
@@ -75,11 +78,15 @@ function getDefaultBaseURL() {
         : "http://baseUrlNotProvided";
 }
 
-function getErrorHandler(promisifyError, defaultErrorHandler) {
+function getErrorHandler(promisifyError, defaultErrorHandler, errorTransformation) {
     return promisifyError
         ? function returnError(error) {
-            defaultErrorHandler(error);
-            return Promise.reject(error);
+            const transformedError = errorTransformation(error);
+            defaultErrorHandler(transformedError);
+            return Promise.reject(transformedError);
         }
-        : defaultErrorHandler;
+        : function returnError(error) {
+            const transformedError = errorTransformation(error);
+            defaultErrorHandler(transformedError);
+        };
 }

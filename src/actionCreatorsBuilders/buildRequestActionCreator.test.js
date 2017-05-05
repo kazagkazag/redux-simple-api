@@ -380,4 +380,100 @@ describe("buildRequestActionCreator", () => {
                 expect(typeof args[2]).toBe("function");
             });
     });
+
+    test("should apply 'onSuccess' hook with access to the response, dispatch and getState", () => {
+        const noop = jest.fn();
+        const expectedParam = "test";
+
+        init({
+            onSuccess: (response, dispatch, getState) => {
+                const transformedResponse = {
+                    ...response,
+                    data: {
+                        ...response.data,
+                        test: expectedParam
+                    }
+                };
+                noop(transformedResponse, dispatch, getState);
+                return transformedResponse;
+            }
+        });
+
+        nock(host)
+            .get("/test")
+            .reply(200, {
+                a: 1
+            });
+
+        const actionCreator = () => buildRequestActionCreator({
+            baseType,
+            url: "/test",
+            baseURL: host
+        });
+
+        return store
+            .dispatch(actionCreator())
+            .then(() => {
+                const actions = store.getActions();
+                const args = noop.mock.calls[0];
+                const successAction = actions.find(action => action.type === successType);
+
+                expect(areActionsInOrder(actions, [
+                    baseType,
+                    successType
+                ])).toBeTruthy();
+
+                expect(successAction.payload.data.test).toBe(expectedParam);
+
+                expect(typeof args[0]).toBe("object");
+                expect(typeof args[1]).toBe("function");
+                expect(typeof args[2]).toBe("function");
+            });
+    });
+
+    test("should apply 'onError' hook with access to the response, dispatch and getState", () => {
+        const noop = jest.fn();
+
+        init({
+            onError: (error, dispatch, getState) => {
+                const transformedError = error;
+                transformedError.meta = {
+                    inTest: true
+                };
+                noop(transformedError, dispatch, getState);
+                return transformedError;
+            }
+        });
+
+        nock(host)
+            .get("/test")
+            .reply(400, {
+                a: 1
+            });
+
+        const actionCreator = () => buildRequestActionCreator({
+            baseType,
+            url: "/test",
+            baseURL: host
+        });
+
+        return store
+            .dispatch(actionCreator())
+            .then(() => {
+                const actions = store.getActions();
+                const args = noop.mock.calls[0];
+                const failAction = actions.find(action => action.type === failType);
+
+                expect(areActionsInOrder(actions, [
+                    baseType,
+                    failType
+                ])).toBeTruthy();
+
+                expect(failAction.payload.meta.inTest).toBeTruthy();
+
+                expect(typeof args[0]).toBe("object");
+                expect(typeof args[1]).toBe("function");
+                expect(typeof args[2]).toBe("function");
+            });
+    });
 });
