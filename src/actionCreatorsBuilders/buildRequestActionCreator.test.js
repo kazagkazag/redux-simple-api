@@ -476,4 +476,52 @@ describe("buildRequestActionCreator", () => {
                 expect(typeof args[2]).toBe("function");
             });
     });
+
+    test("should take response from latest request from multiple requests", (done) => {
+        init();
+
+        nock(host)
+            .get("/test")
+            .reply(200, {
+                a: 1
+            });
+
+        nock(host)
+            .get("/test")
+            .delay(200) // will return as last response, but should be ignored
+            .reply(200, {
+                a: 2
+            });
+
+        nock(host)
+            .get("/test")
+            .delay(50)
+            .reply(200, {
+                a: 3
+            });
+
+        const actionCreator = () => buildRequestActionCreator({
+            baseType,
+            url: "/test",
+            baseURL: host,
+            takeLatest: true
+        });
+
+        store.dispatch(actionCreator());
+        store.dispatch(actionCreator());
+        store.dispatch(actionCreator());
+
+        setTimeout(() => {
+            const actions = store.getActions();
+            const lastSuccessAction = actions.filter(action => action.type === successType).pop();
+
+            expect(areActionsInOrder(actions, [
+                baseType,
+                successType
+            ])).toBeTruthy();
+
+            expect(lastSuccessAction.payload.data.a).toBe(3);
+            done();
+        }, 500);
+    });
 });

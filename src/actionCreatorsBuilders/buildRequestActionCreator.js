@@ -1,8 +1,10 @@
 // @flow
 
 import axios from "axios";
+import shortid from "shortid";
 import buildSyncActionCreator from "./buildSyncActionCreator";
 import rsaConfig from "../core/config";
+import queue from "../core/queue";
 
 export default function buildRequestActionCreator(requestConfig: Object): Function {
     const {
@@ -11,6 +13,7 @@ export default function buildRequestActionCreator(requestConfig: Object): Functi
         successSuffix,
         failSuffix,
         promisifyError,
+        takeLatest,
         ...axiosConfig
     } = getOptions(requestConfig);
 
@@ -23,7 +26,18 @@ export default function buildRequestActionCreator(requestConfig: Object): Functi
     return (dispatch: Function, getState: Function) => {
         dispatch(actions.start());
 
+        const requestId = shortid.generate();
+
+        if (takeLatest) {
+            queue[baseType] = requestId;
+        }
+
         const defaultErrorHandler = error => dispatch(actions.fail(error));
+        const defaultSuccessHandler = response =>
+            dispatch(actions.success(response.data, response.status));
+        const successHandler = takeLatest
+            ? getSuccessHandler(defaultSuccessHandler, requestId, baseType)
+            : defaultSuccessHandler;
         const transformedConfig = rsaConfig.get().beforeRequest(axiosConfig, dispatch, getState);
         const errorTransformation = error =>
             rsaConfig.get().onError.call(null, error, dispatch, getState);
@@ -32,7 +46,7 @@ export default function buildRequestActionCreator(requestConfig: Object): Functi
             .request(transformedConfig)
             .then(response => rsaConfig.get().onResponse(response, dispatch, getState))
             .then(response => rsaConfig.get().onSuccess(response, dispatch, getState))
-            .then(response => dispatch(actions.success(response.data, response.status)))
+            .then(successHandler)
             .catch(getErrorHandler(promisifyError, defaultErrorHandler, errorTransformation));
     };
 }
@@ -64,29 +78,43 @@ function getOptions(config: Object): Object {
         url: config.url || "/defaultUrl",
         baseURL: getBaseURL(config.baseURL),
         method: config.method || "get",
-        promisifyError: config.promisifyError
+        promisifyError: config.promisifyError,
+        takeLatest: config.takeLatest || false
     };
 }
 
-function getBaseURL(providedBaseURL) {
+function getBaseURL(providedBaseURL: string): string {
     return providedBaseURL || getDefaultBaseURL();
 }
 
-function getDefaultBaseURL() {
+function getDefaultBaseURL(): string {
     return process.env.NODE_ENV === "test"
         ? "http://localhost"
         : "http://baseUrlNotProvided";
 }
 
-function getErrorHandler(promisifyError, defaultErrorHandler, errorTransformation) {
+function getErrorHandler(promisifyError: boolean,
+                         defaultErrorHandler: Function,
+                         errorTransformation: Function) {
     return promisifyError
-        ? function returnError(error) {
+        ? function returnError(error: Object) {
             const transformedError = errorTransformation(error);
             defaultErrorHandler(transformedError);
             return Promise.reject(transformedError);
         }
-        : function returnError(error) {
+        : function returnError(error: Object) {
             const transformedError = errorTransformation(error);
             defaultErrorHandler(transformedError);
         };
+}
+
+function getSuccessHandler(defaultSuccessHandler: Function,
+                           requestId: string,
+                           requestBaseType: string): Function {
+    return function handleLatestResponse(response) {
+        return queue[requestBaseType] === requestId
+            ? defaultSuccessHandler(response)
+            : function noop() {
+            };
+    };
 }
