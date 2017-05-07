@@ -116,5 +116,27 @@ describe("buildReducers", () => {
 
         expect(received).toEqual(expected);
     });
+
+    test("should handle action after succeeded request and apply data transformation", () => {
+        init({
+            suffixes: {
+                start: "",
+                success: successSuffix,
+                error: errorSuffix
+            },
+            dataTransformation: data => data.message
+        });
+        const responseData = { message: 1 };
+        const expected = {
+            pending: false,
+            done: true,
+            data: responseData.message,
+            error: null
+        };
+
+        const received = reducer(undefined, getSuccessAction(responseData));
+
+        expect(received).toEqual(expected);
+    });
 });
 

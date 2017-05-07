@@ -69,3 +69,14 @@ test("should set error transformation in the config", () => {
 
     expect(config.get().errorTransformation).toEqual(errorTransformation);
 });
+
+test("should set data transformation in the config", () => {
+    const dataTransformation = function spy() {
+    };
+
+    init({
+        dataTransformation
+    });
+
+    expect(config.get().dataTransformation).toEqual(dataTransformation);
+});
