@@ -73,20 +73,46 @@ describe("buildReducers", () => {
         expect(received).toEqual(expected);
     });
 
-    xtest("should handle action after failed request", () => {
+    test("should handle action after failed request", () => {
+        const networkError = new Error("Ups, 404.");
+        networkError.data = {
+            causedBy: "test property",
+            code: "my.error.code"
+        };
         const expected = {
             pending: false,
             done: false,
             data: null,
-            error: null
+            error: networkError
         };
 
-        const received = reducer(undefined, getErrorAction(new Error("Some error"), {
-            data: {
-                causedBy: "test property",
-                code: "my.error.code"
-            }
-        }));
+        const received = reducer(undefined, getErrorAction(networkError));
+
+        expect(received).toEqual(expected);
+    });
+
+    test("should handle action after failed request and apply error transformation", () => {
+        init({
+            suffixes: {
+                start: "",
+                success: successSuffix,
+                error: errorSuffix
+            },
+            errorTransformation: error => error.data
+        });
+        const networkError = new Error("Ups, 404.");
+        networkError.data = {
+            causedBy: "test property",
+            code: "my.error.code"
+        };
+        const expected = {
+            pending: false,
+            done: false,
+            data: null,
+            error: networkError.data
+        };
+
+        const received = reducer(undefined, getErrorAction(networkError));
 
         expect(received).toEqual(expected);
     });

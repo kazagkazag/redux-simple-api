@@ -3,6 +3,7 @@ import thunk from "redux-thunk";
 import nock from "nock";
 import axios from "axios";
 import httpAdapter from "axios/lib/adapters/http";
+import { isFSA } from "flux-standard-action";
 import buildRequestActionCreator from "./buildRequestActionCreator";
 import init from "../core/init";
 import { areActionsInOrder } from "../../tools/testUtils";
@@ -66,10 +67,11 @@ describe("buildRequestActionCreator", () => {
             .dispatch(actionCreator())
             .then(() => {
                 const actions = store.getActions();
+                const failAction = actions.find(action => action.type === failType);
 
                 expect(actions.find(action => action.type === baseType)).not.toBe(undefined);
                 expect(actions.find(action => action.type === successType)).toBe(undefined);
-                expect(actions.find(action => action.type === failType)).not.toBe(undefined);
+                expect(isFSA(failAction)).toBeTruthy();
             });
     });
 

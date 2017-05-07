@@ -7,6 +7,7 @@ export default function init(providedOptions: Object = {}): void {
         onResponse: response => response,
         onError: response => response,
         onSuccess: response => response,
+        errorTransformation: error => error,
         suffixes: {
             start: "",
             success: "",
@@ -19,6 +20,8 @@ export default function init(providedOptions: Object = {}): void {
         onError: providedOptions.onError || defaults.onError,
         onSuccess: providedOptions.onSuccess
             || defaults.onSuccess,
+        errorTransformation: providedOptions.errorTransformation
+            || defaults.errorTransformation,
         suffixes: {
             ...defaults.suffixes,
             ...providedOptions.suffixes

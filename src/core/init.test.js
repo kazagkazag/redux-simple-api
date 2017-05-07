@@ -58,3 +58,14 @@ test("should set 'after succeeded request' hook in the config", () => {
 
     expect(config.get().onSuccess).toEqual(onSuccess);
 });
+
+test("should set error transformation in the config", () => {
+    const errorTransformation = function spy() {
+    };
+
+    init({
+        errorTransformation
+    });
+
+    expect(config.get().errorTransformation).toEqual(errorTransformation);
+});

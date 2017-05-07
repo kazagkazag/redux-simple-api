@@ -57,9 +57,11 @@ function getDoneReducer(actionTypes) {
 
 function getErrorReducer(actionTypes) {
     return (state = null, action) => {
+        const errorTransformation = rsaConfig.get().errorTransformation;
+
         switch (action.type) {
             case actionTypes.error:
-                return action.error;
+                return errorTransformation(action.payload) || null;
             case actionTypes.start:
             case actionTypes.success:
                 return null;
