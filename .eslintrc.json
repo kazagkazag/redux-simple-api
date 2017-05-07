@@ -12,10 +12,6 @@
             "error",
             "double"
         ],
-        "indent": [
-            "error",
-            4
-        ],
         "comma-dangle": [
             "error",
             "never"
@@ -31,6 +27,13 @@
             {
                 "functions": false,
                 "classes": true
+            }
+        ],
+        "indent": [
+            "error",
+            4,
+            {
+                "SwitchCase": 1
             }
         ]
     },

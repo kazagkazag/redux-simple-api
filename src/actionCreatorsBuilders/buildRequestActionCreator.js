@@ -35,19 +35,22 @@ export default function buildRequestActionCreator(requestConfig: Object): Functi
         const defaultErrorHandler = error => dispatch(actions.fail(error));
         const defaultSuccessHandler = response =>
             dispatch(actions.success(response.data, response.status));
+
         const successHandler = takeLatest
             ? getSuccessHandler(defaultSuccessHandler, requestId, baseType)
             : defaultSuccessHandler;
-        const transformedConfig = rsaConfig.get().beforeRequest(axiosConfig, dispatch, getState);
-        const errorTransformation = error =>
+
+        const customErrorHandler = error =>
             rsaConfig.get().onError.call(null, error, dispatch, getState);
+
+        const transformedConfig = rsaConfig.get().beforeRequest(axiosConfig, dispatch, getState);
 
         return axios
             .request(transformedConfig)
             .then(response => rsaConfig.get().onResponse(response, dispatch, getState))
             .then(response => rsaConfig.get().onSuccess(response, dispatch, getState))
             .then(successHandler)
-            .catch(getErrorHandler(promisifyError, defaultErrorHandler, errorTransformation));
+            .catch(getErrorHandler(promisifyError, defaultErrorHandler, customErrorHandler));
     };
 }
 
@@ -95,16 +98,16 @@ function getDefaultBaseURL(): string {
 
 function getErrorHandler(promisifyError: boolean,
                          defaultErrorHandler: Function,
-                         errorTransformation: Function) {
+                         customErrorHandler: Function) {
     return promisifyError
         ? function returnError(error: Object) {
-            const transformedError = errorTransformation(error);
-            defaultErrorHandler(transformedError);
-            return Promise.reject(transformedError);
+            const handledError = customErrorHandler(error);
+            defaultErrorHandler(handledError);
+            return Promise.reject(handledError);
         }
         : function returnError(error: Object) {
-            const transformedError = errorTransformation(error);
-            defaultErrorHandler(transformedError);
+            const handledError = customErrorHandler(error);
+            defaultErrorHandler(handledError);
         };
 }
 
