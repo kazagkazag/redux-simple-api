@@ -4,16 +4,25 @@ import rsaConfig from "../core/config";
 
 export default function buildReducers(options: Object): Object {
     const {
-        baseType
+        baseType,
+        customReducers = {}
     } = options;
 
     const actionTypes = getActionTypes(baseType);
 
     return combineReducers({
-        pending: getPendingReducer(actionTypes),
-        done: getDoneReducer(actionTypes),
-        error: getErrorReducer(actionTypes),
-        data: getDataReducer(actionTypes)
+        pending: customReducers.pending
+            ? customReducers.pending
+            : getPendingReducer(actionTypes),
+        done: customReducers.done
+            ? customReducers.done
+            : getDoneReducer(actionTypes),
+        error: customReducers.error
+            ? customReducers.error
+            : getErrorReducer(actionTypes),
+        data: customReducers.data
+            ? customReducers.data
+            : getDataReducer(actionTypes)
     });
 }
 

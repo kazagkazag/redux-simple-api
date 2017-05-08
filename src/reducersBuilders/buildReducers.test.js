@@ -138,5 +138,34 @@ describe("buildReducers", () => {
 
         expect(received).toEqual(expected);
     });
+
+    test("should apply custom reducers", () => {
+        init({
+            suffixes: {
+                start: "",
+                success: successSuffix,
+                error: errorSuffix
+            }
+        });
+        const expected = {
+            pending: 1,
+            done: 2,
+            data: 3,
+            error: 4
+        };
+
+        const reducerWithCustoms = buildReducers({
+            baseType,
+            customReducers: {
+                pending: () => 1,
+                done: () => 2,
+                data: () => 3,
+                error: () => 4
+            }
+        });
+        const received = reducerWithCustoms(undefined, getStartAction());
+
+        expect(received).toEqual(expected);
+    });
 });
 
