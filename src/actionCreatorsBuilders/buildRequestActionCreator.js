@@ -6,7 +6,14 @@ import buildSyncActionCreator from "./buildSyncActionCreator";
 import rsaConfig from "../core/config";
 import queue from "../core/queue";
 
-export default function buildRequestActionCreator(requestConfig: Object): Function {
+export default function buildRequestActionCreator(requestConfig: {
+    baseType: string,
+    startSuffix?: string,
+    successSuffix?: string,
+    failSuffix?: string,
+    promisifyError?: boolean,
+    takeLatest?: boolean
+}): Function {
     const {
         baseType,
         startSuffix,

@@ -2,7 +2,15 @@
 import { combineReducers } from "redux";
 import rsaConfig from "../core/config";
 
-export default function buildReducers(options: Object): Object {
+export default function buildReducers(options: {
+    baseType: string,
+    customReducers?: {
+        pending?: Function,
+        done?: Function,
+        error?: Function,
+        data?: Function
+    }
+}): Object {
     const {
         baseType,
         customReducers = {}

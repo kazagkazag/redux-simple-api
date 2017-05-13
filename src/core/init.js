@@ -1,7 +1,19 @@
 // @flow
 import config from "./config";
 
-export default function init(providedOptions: Object = {}): void {
+export default function init(providedOptions: {
+    beforeRequest?: Function,
+    onResponse?: Function,
+    onError?: Function,
+    onSuccess?: Function,
+    errorTransformation?: Function,
+    dataTransformation?: Function,
+    suffixes?: {
+        start?: string,
+        success?: string,
+        error?: string
+    }
+} = {}): void {
     const defaults = {
         beforeRequest: request => request,
         onResponse: response => response,
