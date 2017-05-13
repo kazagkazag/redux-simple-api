@@ -4,11 +4,11 @@ import nock from "nock";
 import axios from "axios";
 import httpAdapter from "axios/lib/adapters/http";
 import { isFSA } from "flux-standard-action";
-import buildRequestActionCreator from "./buildRequestActionCreator";
+import request from "./request";
 import init from "../core/init";
 import { areActionsInOrder } from "../../tools/testUtils";
 
-describe("buildRequestActionCreator", () => {
+describe("request", () => {
     const middlewares = [thunk];
     const store = configureMockStore(middlewares)({});
     const baseType = "my/action";
@@ -35,7 +35,7 @@ describe("buildRequestActionCreator", () => {
             .get("/test")
             .reply(200);
 
-        const actionCreator = () => buildRequestActionCreator({
+        const actionCreator = () => request({
             baseType,
             url: "/test",
             baseURL: host
@@ -57,7 +57,7 @@ describe("buildRequestActionCreator", () => {
             .get("/test")
             .reply(404);
 
-        const actionCreator = () => buildRequestActionCreator({
+        const actionCreator = () => request({
             baseType,
             url: "/test",
             baseURL: host
@@ -84,13 +84,13 @@ describe("buildRequestActionCreator", () => {
             .get("/test2")
             .reply(200);
 
-        const actionCreator = () => buildRequestActionCreator({
+        const actionCreator = () => request({
             baseType,
             url: "/test1",
             baseURL: host
         });
 
-        const nextActionCreator = () => buildRequestActionCreator({
+        const nextActionCreator = () => request({
             baseType: `${baseType}/next`,
             url: "/test2",
             baseURL: host
@@ -123,14 +123,14 @@ describe("buildRequestActionCreator", () => {
             .get("/test2")
             .reply(200);
 
-        const actionCreator = () => buildRequestActionCreator({
+        const actionCreator = () => request({
             baseType,
             url: "/test1",
             baseURL: host,
             promisifyError: true
         });
 
-        const nextActionCreator = () => buildRequestActionCreator({
+        const nextActionCreator = () => request({
             baseType: `${baseType}/next`,
             url: "/test2",
             baseURL: host
@@ -158,7 +158,7 @@ describe("buildRequestActionCreator", () => {
             .get("/test")
             .reply(200);
 
-        const actionCreator = () => buildRequestActionCreator({
+        const actionCreator = () => request({
             baseType,
             url: "/test",
             baseURL: host
@@ -185,7 +185,7 @@ describe("buildRequestActionCreator", () => {
             .get("/test")
             .reply(400);
 
-        const actionCreator = () => buildRequestActionCreator({
+        const actionCreator = () => request({
             baseType,
             url: "/test",
             baseURL: host
@@ -212,7 +212,7 @@ describe("buildRequestActionCreator", () => {
             .get("/test")
             .reply(200, "test response");
 
-        const actionCreator = () => buildRequestActionCreator({
+        const actionCreator = () => request({
             baseType,
             url: "/test",
             baseURL: host
@@ -239,7 +239,7 @@ describe("buildRequestActionCreator", () => {
             .get("/test")
             .reply(200, { a: 1 });
 
-        const actionCreator = () => buildRequestActionCreator({
+        const actionCreator = () => request({
             baseType,
             url: "/test",
             baseURL: host
@@ -266,7 +266,7 @@ describe("buildRequestActionCreator", () => {
             .get("/test")
             .reply(400, { a: 1 });
 
-        const actionCreator = () => buildRequestActionCreator({
+        const actionCreator = () => request({
             baseType,
             url: "/test",
             baseURL: host
@@ -320,7 +320,7 @@ describe("buildRequestActionCreator", () => {
             .get("/test")
             .reply(200);
 
-        const actionCreator = () => buildRequestActionCreator({
+        const actionCreator = () => request({
             baseType,
             url: "/test",
             baseURL: host
@@ -360,7 +360,7 @@ describe("buildRequestActionCreator", () => {
                 "custom-header": header
             });
 
-        const actionCreator = () => buildRequestActionCreator({
+        const actionCreator = () => request({
             baseType,
             url: "/test",
             baseURL: host
@@ -407,7 +407,7 @@ describe("buildRequestActionCreator", () => {
                 a: 1
             });
 
-        const actionCreator = () => buildRequestActionCreator({
+        const actionCreator = () => request({
             baseType,
             url: "/test",
             baseURL: host
@@ -453,7 +453,7 @@ describe("buildRequestActionCreator", () => {
                 a: 1
             });
 
-        const actionCreator = () => buildRequestActionCreator({
+        const actionCreator = () => request({
             baseType,
             url: "/test",
             baseURL: host
@@ -502,7 +502,7 @@ describe("buildRequestActionCreator", () => {
                 a: 3
             });
 
-        const actionCreator = () => buildRequestActionCreator({
+        const actionCreator = () => request({
             baseType,
             url: "/test",
             baseURL: host,

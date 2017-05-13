@@ -6,7 +6,7 @@ import buildSyncActionCreator from "./buildSyncActionCreator";
 import rsaConfig from "../core/config";
 import queue from "../core/queue";
 
-export default function buildRequestActionCreator(requestConfig: {
+export default function request(requestConfig: {
     baseType: string,
     startSuffix?: string,
     successSuffix?: string,
@@ -100,7 +100,7 @@ function getBaseURL(providedBaseURL: string): string {
 function getDefaultBaseURL(): string {
     return process.env.NODE_ENV === "test"
         ? "http://localhost"
-        : "http://baseUrlNotProvided";
+        : "";
 }
 
 function getErrorHandler(promisifyError: boolean,
