@@ -5,15 +5,16 @@ with redux. It is common problem for many developers - a lot of code
 required to handle asynchronous actions. You can mitigate it using
 `redux-thunk` and `redux-simple-api`.
 
-Let's see an example, simple dashboard with user posts for our great
+Let's see an example, simple dashboard with user posts for next great
 blogging platform. We have few requirements:
 
-* because our actions have following form of the type property: `my/action`,
+* our actions have following form of the type property: `my/action`,
 we wan't to add suffixes to all request actions: `/start`, `/done` and `/failed`
+to simply identify in `redux dev tools` which action was dispatched
 * we have to attach to every request custom header `SESSION-TOKEN` with
-token saved previously in our redux store
-* after every response, we have to get new `SESSION-TOKEN` and save it in
-the redux store
+token saved previously in our redux store, so we need access to store
+* after every response, we have to get new `SESSION-TOKEN` from response headers
+and save it in the redux store
 * every failed request could have some data with details from the backend in JSON
 format, so we have to save those details
 * after App mount, we would like to fetch user data, users posts and if any of those request
@@ -45,23 +46,16 @@ export default store;
 Nothing special so far, it is typical store configurator with redux-thunk as middleware.
 Now we can initialize our app:
 ```js
-import React from "react";
-import { render } from "react-dom";
-import { Provider } from "react-redux";
-import { Router, browserHistory } from "react-router";
+// ...maany imports...
 import {init} from "redux-simple-api"; // something new...
-import getRoutes from "./routes";
 import store from "./store";
-import transformErrorDataToReadableForm from "my/utils/errors";
-
-import "./styles/app.scss";
 
 init({
     beforeRequest: function(requestConfig, dispatch, getState) {
           requestConfig.headers["SESSION-TOKEN"] = getState().user.token;
           return requestConfig;
     },
-    afterResponse: function(response, dispatch) {
+    onResponse: function(response, dispatch) {
         dispatch({
             type: "user/setToken",
             payload: {
@@ -69,8 +63,8 @@ init({
             }
         });
     },
-    afterFailedRequest: function (response) {
-        return transformErrorDataToReadableForm(response); //custom transformation will return JSON from error
+    errorTransformation: function (payload) {
+        return payload.response.data;
     },
     suffixes: {
         start: "/start",
@@ -79,22 +73,25 @@ init({
     }
 }); // initialize library with config required for our app
 
-render(
-    <Provider store={store}>
-        <Router history={browserHistory} routes={getRoutes()}/>
-    </Provider>, document.getElementById("app")
-);
+// render your application
 ```
 Ok, two new things:
 * import `import {init} from "redux-simple-api";`
-* `init({})` - you have to call `init` before rendering entire application.
+* `init()` - you have to call `init` before rendering entire application.
 `init` takes configuration object, which is described below in API section.
 For now you should know, that you can skip this argument and let
-library works on defaults.
+library works on defaults. But we need some configuration, so we provided:
+* suffixes, now every action will have our action type composed of base action type
+and suffix, depends on which state of the request it was dispatched
+* few hooks:
+    * `beforeRequest` - in that hook we can get current token and add it to the request
+    headers
+    * `onResponse` - after response we have to get new token from the response headers
+    and save it in the store
+    * `errorTransformation` - when errors came, that transformation will be used
+     in error reducer to transform error action to the format expected in our store
 
 Now you can write your request handlers using few RSA helpers.
-Let's assume, that you use `ducks` (TODO -> add link) and keep all action types, 
-action creators and reducers in one file:
 We have app bootstrapped, but we need to fetch user data and
 user posts.
 For simplicity sake, we will keep data related to the user domain,
