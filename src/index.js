@@ -3,7 +3,7 @@ import buildSyncActionCreator from "./actionCreatorsBuilders/buildSyncActionCrea
 import init from "./core/init";
 import buildReducers from "./reducersBuilders/buildReducers";
 
-export default {
+export {
     buildSyncActionCreator,
     request,
     init,

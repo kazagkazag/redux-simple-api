@@ -4,8 +4,10 @@ const webpack = require("webpack");
 module.exports = {
     entry: "./src/index.js",
     output: {
-        filename: "index.min.js",
-        path: path.resolve(__dirname, "dist")
+        filename: "index.js",
+        path: path.resolve(__dirname, "dist"),
+        library: "ReactSimpleAPI",
+        libraryTarget: "umd"
     },
     module: {
         rules: [
@@ -22,5 +24,10 @@ module.exports = {
         new webpack.optimize.UglifyJsPlugin({
             sourceMap: "base"
         })
-    ]
+    ],
+    externals: {
+        axios: "axios",
+        shortid: "shortid",
+        redux: "redux"
+    }
 };
