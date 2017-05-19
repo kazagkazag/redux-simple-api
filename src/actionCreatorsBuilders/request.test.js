@@ -14,16 +14,25 @@ describe("request", () => {
     const baseType = "my/action";
     const successSuffix = "/done";
     const failSuffix = "/failed";
+    const startSuffix = "/started";
+    const startType = `${baseType}${startSuffix}`;
     const successType = `${baseType}${successSuffix}`;
     const failType = `${baseType}${failSuffix}`;
     const host = "http://localhost";
+    const suffixes = {
+        start: startSuffix,
+        success: successSuffix,
+        error: failSuffix
+    };
 
     axios.defaults.host = host;
     axios.defaults.adapter = httpAdapter;
 
     beforeEach(() => {
         store.clearActions();
-        init();
+        init({
+            suffixes
+        });
     });
 
     afterEach(() => {
@@ -46,7 +55,7 @@ describe("request", () => {
             .then(() => {
                 const actions = store.getActions();
 
-                expect(actions.find(action => action.type === baseType)).not.toBe(undefined);
+                expect(actions.find(action => action.type === startType)).not.toBe(undefined);
                 expect(actions.find(action => action.type === successType)).not.toBe(undefined);
                 expect(actions.find(action => action.type === failType)).toBe(undefined);
             });
@@ -69,7 +78,7 @@ describe("request", () => {
                 const actions = store.getActions();
                 const failAction = actions.find(action => action.type === failType);
 
-                expect(actions.find(action => action.type === baseType)).not.toBe(undefined);
+                expect(actions.find(action => action.type === startType)).not.toBe(undefined);
                 expect(actions.find(action => action.type === successType)).toBe(undefined);
                 expect(isFSA(failAction)).toBeTruthy();
             });
@@ -106,9 +115,9 @@ describe("request", () => {
                 const actions = store.getActions();
 
                 expect(areActionsInOrder(actions, [
-                    baseType,
+                    startType,
                     successType,
-                    `${baseType}/next`,
+                    `${baseType}/next${startSuffix}`,
                     `${baseType}/next${successSuffix}`
                 ])).toBeTruthy();
             });
@@ -146,9 +155,9 @@ describe("request", () => {
                 const actions = store.getActions();
 
                 expect(areActionsInOrder(actions, [
-                    baseType,
+                    startType,
                     failType,
-                    `${baseType}/next`,
+                    `${baseType}/next${startSuffix}`,
                     `${baseType}/next${successSuffix}`
                 ])).toBeTruthy();
             });
@@ -171,7 +180,7 @@ describe("request", () => {
                 const successAction = actions.find(action => action.type === successType);
 
                 expect(areActionsInOrder(actions, [
-                    baseType,
+                    startType,
                     successType
                 ])).toBeTruthy();
 
@@ -198,7 +207,7 @@ describe("request", () => {
                 const failAction = actions.find(action => action.type === failType);
 
                 expect(areActionsInOrder(actions, [
-                    baseType,
+                    startType,
                     failType
                 ])).toBeTruthy();
 
@@ -225,7 +234,7 @@ describe("request", () => {
                 const successAction = actions.find(action => action.type === successType);
 
                 expect(areActionsInOrder(actions, [
-                    baseType,
+                    startType,
                     successType
                 ])).toBeTruthy();
 
@@ -252,7 +261,7 @@ describe("request", () => {
                 const successAction = actions.find(action => action.type === successType);
 
                 expect(areActionsInOrder(actions, [
-                    baseType,
+                    startType,
                     successType
                 ])).toBeTruthy();
 
@@ -279,7 +288,7 @@ describe("request", () => {
                 const failAction = actions.find(action => action.type === failType);
 
                 expect(areActionsInOrder(actions, [
-                    baseType,
+                    startType,
                     failType
                 ])).toBeTruthy();
 
@@ -308,7 +317,8 @@ describe("request", () => {
                 };
                 noop(newConfig, dispatch, getState);
                 return newConfig;
-            }
+            },
+            suffixes
         });
 
         nock(host,
@@ -333,7 +343,7 @@ describe("request", () => {
                 const args = noop.mock.calls[0];
 
                 expect(areActionsInOrder(actions, [
-                    baseType,
+                    startType,
                     successType
                 ])).toBeTruthy();
 
@@ -351,7 +361,8 @@ describe("request", () => {
             onResponse: (response, dispatch, getState) => {
                 noop(response, dispatch, getState);
                 return response;
-            }
+            },
+            suffixes
         });
 
         nock(host)
@@ -373,7 +384,7 @@ describe("request", () => {
                 const args = noop.mock.calls[0];
 
                 expect(areActionsInOrder(actions, [
-                    baseType,
+                    startType,
                     successType
                 ])).toBeTruthy();
 
@@ -398,7 +409,8 @@ describe("request", () => {
                 };
                 noop(transformedResponse, dispatch, getState);
                 return transformedResponse;
-            }
+            },
+            suffixes
         });
 
         nock(host)
@@ -421,7 +433,7 @@ describe("request", () => {
                 const successAction = actions.find(action => action.type === successType);
 
                 expect(areActionsInOrder(actions, [
-                    baseType,
+                    startType,
                     successType
                 ])).toBeTruthy();
 
@@ -444,7 +456,8 @@ describe("request", () => {
                 };
                 noop(transformedError, dispatch, getState);
                 return transformedError;
-            }
+            },
+            suffixes
         });
 
         nock(host)
@@ -467,7 +480,7 @@ describe("request", () => {
                 const failAction = actions.find(action => action.type === failType);
 
                 expect(areActionsInOrder(actions, [
-                    baseType,
+                    startType,
                     failType
                 ])).toBeTruthy();
 
@@ -480,7 +493,9 @@ describe("request", () => {
     });
 
     test("should take response from latest request from multiple requests", (done) => {
-        init();
+        init({
+            suffixes
+        });
 
         nock(host)
             .get("/test")
@@ -518,7 +533,7 @@ describe("request", () => {
             const lastSuccessAction = actions.filter(action => action.type === successType).pop();
 
             expect(areActionsInOrder(actions, [
-                baseType,
+                startType,
                 successType
             ])).toBeTruthy();
 

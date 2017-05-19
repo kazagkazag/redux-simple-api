@@ -248,11 +248,16 @@ function getActions(baseType, suffixes) {
 }
 
 function getOptions(config) {
+    var _rsaConfig$get$suffix = _config2.default.get().suffixes,
+        start = _rsaConfig$get$suffix.start,
+        success = _rsaConfig$get$suffix.success,
+        error = _rsaConfig$get$suffix.error;
+
     return {
         baseType: config.baseType || "no/type",
-        startSuffix: config.startSuffix || "",
-        failSuffix: config.failSuffix || "/failed",
-        successSuffix: config.successSuffix || "/done",
+        startSuffix: config.startSuffix || start,
+        failSuffix: config.failSuffix || error,
+        successSuffix: config.successSuffix || success,
         url: config.url || "/defaultUrl",
         baseURL: getBaseURL(config.baseURL),
         method: config.method || "get",
@@ -331,9 +336,9 @@ function init() {
             return error;
         },
         suffixes: {
-            start: "",
-            success: "",
-            error: ""
+            start: "_start",
+            success: "_done",
+            error: "_failed"
         }
     };
     var options = {

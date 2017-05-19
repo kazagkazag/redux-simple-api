@@ -22,9 +22,9 @@ export default function init(providedOptions: {
         errorTransformation: error => error,
         dataTransformation: error => error,
         suffixes: {
-            start: "",
-            success: "",
-            error: ""
+            start: "_start",
+            success: "_done",
+            error: "_failed"
         }
     };
     const options = {

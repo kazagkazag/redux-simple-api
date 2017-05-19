@@ -80,11 +80,17 @@ function getActions(baseType: string, suffixes: Object): Object {
 }
 
 function getOptions(config: Object): Object {
+    const {
+        start,
+        success,
+        error
+    } = rsaConfig.get().suffixes;
+
     return {
         baseType: config.baseType || "no/type",
-        startSuffix: config.startSuffix || "",
-        failSuffix: config.failSuffix || "/failed",
-        successSuffix: config.successSuffix || "/done",
+        startSuffix: config.startSuffix || start,
+        failSuffix: config.failSuffix || error,
+        successSuffix: config.successSuffix || success,
         url: config.url || "/defaultUrl",
         baseURL: getBaseURL(config.baseURL),
         method: config.method || "get",
