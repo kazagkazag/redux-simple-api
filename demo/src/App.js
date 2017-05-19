@@ -6,22 +6,29 @@ import { initializeDashboard } from "./actions";
 
 class App extends Component {
     componentDidMount() {
-        this.props.initializeDashboard();
+        this.props.initializeDashboard(1);
     }
 
     render() {
-        return (
+        const {
+            user,
+            posts
+        } = this.props;
+
+        return user && posts ? (
             <main>
                 <header>
-                    <h1>User</h1>
+                    <h1>User {this.props.user.name}</h1>
                 </header>
             </main>
-        );
+        ) : <p>Loading...</p>;
     }
 }
 
 App.propTypes = {
-    initializeDashboard: PropTypes.func
+    initializeDashboard: PropTypes.func,
+    user: PropTypes.object,
+    posts: PropTypes.object
 };
 
 function mapDispatchToProps(dispatch) {
@@ -30,7 +37,14 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
+function mapStateToProps(state) {
+    return {
+        user: state.user.data,
+        posts: state.posts.data
+    };
+}
+
 export default connect(
-    null,
+    mapStateToProps,
     mapDispatchToProps
 )(App);

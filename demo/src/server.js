@@ -4,7 +4,8 @@ function getUser(req, res, next) {
     res.send({
         name: "John",
         age: "24",
-        role: "author"
+        role: "author",
+        id: "1"
     });
     next();
 }
@@ -42,7 +43,7 @@ function logoutUser(req, res, next) {
 const server = restify.createServer();
 
 server.get("api/user", getUser);
-server.get("api/posts", getPosts);
+server.get("api/posts/user/:id", getPosts);
 server.post("api/user/logout", logoutUser);
 
 server.listen(8080);
