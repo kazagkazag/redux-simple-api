@@ -187,7 +187,8 @@ function request(requestConfig) {
         failSuffix = _getOptions.failSuffix,
         promisifyError = _getOptions.promisifyError,
         takeLatest = _getOptions.takeLatest,
-        axiosConfig = _objectWithoutProperties(_getOptions, ["baseType", "startSuffix", "successSuffix", "failSuffix", "promisifyError", "takeLatest"]);
+        transformData = _getOptions.transformData,
+        axiosConfig = _objectWithoutProperties(_getOptions, ["baseType", "startSuffix", "successSuffix", "failSuffix", "promisifyError", "takeLatest", "transformData"]);
 
     var actions = getActions(baseType, {
         startSuffix: startSuffix,
@@ -208,7 +209,7 @@ function request(requestConfig) {
             return dispatch(actions.fail(error));
         };
         var defaultSuccessHandler = function defaultSuccessHandler(response) {
-            return dispatch(actions.success(response.data, response.status));
+            return dispatch(actions.success(transformData(response.data), response.status));
         };
 
         var successHandler = takeLatest ? getSuccessHandler(defaultSuccessHandler, requestId, baseType) : defaultSuccessHandler;
@@ -262,7 +263,10 @@ function getOptions(config) {
         baseURL: getBaseURL(config.baseURL),
         method: config.method || "get",
         promisifyError: config.promisifyError,
-        takeLatest: config.takeLatest || false
+        takeLatest: config.takeLatest || false,
+        transformData: config.transformData || function (data) {
+            return data;
+        }
     };
 }
 

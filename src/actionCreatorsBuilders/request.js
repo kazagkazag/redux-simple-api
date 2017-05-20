@@ -12,7 +12,8 @@ export default function request(requestConfig: {
     successSuffix?: string,
     failSuffix?: string,
     promisifyError?: boolean,
-    takeLatest?: boolean
+    takeLatest?: boolean,
+    transformData?: Function
 }): Function {
     const {
         baseType,
@@ -21,6 +22,7 @@ export default function request(requestConfig: {
         failSuffix,
         promisifyError,
         takeLatest,
+        transformData,
         ...axiosConfig
     } = getOptions(requestConfig);
 
@@ -41,7 +43,9 @@ export default function request(requestConfig: {
 
         const defaultErrorHandler = error => dispatch(actions.fail(error));
         const defaultSuccessHandler = response =>
-            dispatch(actions.success(response.data, response.status));
+            dispatch(actions.success(
+                transformData(response.data), response.status
+            ));
 
         const successHandler = takeLatest
             ? getSuccessHandler(defaultSuccessHandler, requestId, baseType)
@@ -95,7 +99,8 @@ function getOptions(config: Object): Object {
         baseURL: getBaseURL(config.baseURL),
         method: config.method || "get",
         promisifyError: config.promisifyError,
-        takeLatest: config.takeLatest || false
+        takeLatest: config.takeLatest || false,
+        transformData: config.transformData || (data => data)
     };
 }
 

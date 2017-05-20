@@ -305,6 +305,34 @@ describe("request", () => {
     test("throttles requests for specified time", () => {
     });
 
+    test("transform data of succeeded request", () => {
+        nock(host)
+            .get("/test")
+            .reply(200, { a: 1 });
+
+        const actionCreator = () => request({
+            baseType,
+            url: "/test",
+            baseURL: host,
+            transformData: data => data.a
+        });
+
+        return store
+            .dispatch(actionCreator())
+            .then(() => {
+                const actions = store.getActions();
+                const successAction = actions.find(action => action.type === successType);
+
+                expect(areActionsInOrder(actions, [
+                    startType,
+                    successType
+                ])).toBeTruthy();
+
+                expect(successAction.payload.status).toBe(200);
+                expect(successAction.payload.data).toEqual(1);
+            });
+    });
+
     test("should apply 'before request' hook with access to the request config, dispatch and getState", () => {
         const noop = jest.fn();
         const header = "test header";
