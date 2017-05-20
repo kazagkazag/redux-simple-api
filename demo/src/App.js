@@ -9,7 +9,15 @@ class App extends Component {
         this.props.initializeDashboard(1);
     }
 
-    render() {
+    renderLoader() {
+        return this.props.loading ? <p>Loading...</p> : null;
+    }
+
+    renderError() {
+        return this.props.failed ? <p>Ups! Errors!</p> : null;
+    }
+
+    renderApp() {
         const {
             user,
             posts
@@ -18,17 +26,34 @@ class App extends Component {
         return user && posts ? (
             <main>
                 <header>
-                    <h1>User {this.props.user.name}</h1>
+                    <h1>User {user.name} (as {user.role})</h1>
                 </header>
+                <ul>
+                    {posts.map(post => {
+                        return (
+                            <li key={post.id}>
+                                {post.title}
+                            </li>
+                        );
+                    })}
+                </ul>
             </main>
-        ) : <p>Loading...</p>;
+        ) : null;
+    }
+
+    render() {
+        return this.renderLoader()
+            || this.renderError()
+            || this.renderApp();
     }
 }
 
 App.propTypes = {
     initializeDashboard: PropTypes.func,
     user: PropTypes.object,
-    posts: PropTypes.object
+    posts: PropTypes.array,
+    loading: PropTypes.bool,
+    failed: PropTypes.bool
 };
 
 function mapDispatchToProps(dispatch) {
@@ -40,7 +65,9 @@ function mapDispatchToProps(dispatch) {
 function mapStateToProps(state) {
     return {
         user: state.user.data,
-        posts: state.posts.data
+        posts: state.posts.data,
+        loading: state.posts.pending || state.user.pending,
+        failed: state.posts.error !== null || state.user.error !== null
     };
 }
 

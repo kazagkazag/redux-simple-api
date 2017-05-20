@@ -6,7 +6,7 @@ init({
         success: "/success",
         error: "/error"
     },
-    errorTransformation: error => error.response.data,
+    errorTransformation: error => error.response.data.reasons,
     beforeRequest: (requestConfig, dispatch, getState) => {
         const reqConfig = {
             ...requestConfig

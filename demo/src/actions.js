@@ -18,7 +18,8 @@ const logoutUser = userId => request({
 const getPostsForUser = userId => request({
     baseType: types.allPosts,
     url: `${urls.allPosts}/user/${userId}`,
-    promisifyError: true
+    promisifyError: true,
+    transformData: data => data.posts
 });
 
 export const clearUserPosts = () => buildSyncActionCreator(types.clearPosts);
