@@ -8,15 +8,31 @@ required to handle asynchronous actions. You can mitigate it using
 ## API
 
 ### init(options: object)
-
-#### suffixes: { start: string, success: string, error: string }
-Required. Strings that are attached to the three main actions dispatched during the request.
-They have to be unique, otherwise reducers can handle your actions properly.
-
 Main function of the RSA. Call this before initialization of the store. Remember, that your
 reducers are created while store initialization, so they have to have access to the
 configuration object. Best practise is to create file in which `init()` is called and
 importing that file before importing store in your app. See demo for example.
+
+Example:
+
+```js
+// apiInitialization.js
+
+import { init } from "redux-simple-api";
+
+init({
+    // configuration
+});
+
+// index.js
+
+import "./apiInitialization"; // initialization of RSA fired..
+import { store } from "./configureStore" // now reducers have access to the RSA config
+```
+
+#### suffixes: { start: string, success: string, error: string }
+Required. Strings that are attached to the three main actions dispatched during the request.
+They have to be unique, otherwise reducers can handle your actions properly.
 
 #### beforeRequest (requestConfig: object, dispatch: Function, getState: function) : requestConfig
 Called before request is made. You have access to the entire request configuration, so you can use
