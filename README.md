@@ -9,19 +9,37 @@ required to handle asynchronous actions. You can mitigate it using
 
 ### init(options: object)
 
+#### suffixes: { start: string, success: string, error: string }
+Required. Strings that are attached to the three main actions dispatched during the request.
+They have to be unique, otherwise reducers can handle your actions properly.
+
 Main function of the RSA. Call this before initialization of the store. Remember, that your
 reducers are created while store initialization, so they have to have access to the
-configuration object. Best practise is to create file within initialization happens and directly
-calling `init()` in that file. See demo for example.
+configuration object. Best practise is to create file in which `init()` is called and
+importing that file before importing store in your app. See demo for example.
 
 #### beforeRequest (requestConfig: object, dispatch: Function, getState: function) : requestConfig
+Called before request is made. You have access to the entire request configuration, so you can use
+this hook to apply some default configuration or dispatch another action.
+
 #### onResponse (response: object, dispatch: Function, getState: function) : response
 Remove this!
+
 #### onError (error: object, dispatch: Function, getState: function) : error
+Called when error came from the server. You have access to the provided error and
+you can modify it there or call some additional action. You have to return new error from that function.
+
 #### onSuccess (response: object, dispatch: Function, getState: function) : response
+Called after succeeded request. In that hook you have access to the response object, and you can
+use it to call any other action or modify response data etc.
+
 #### errorTransformation (error: object) : object
+Called in every reducer handling errors. You can use that to apply some global transformations for
+errors dispatched from the actions before they are save in the store.
+
 #### dataTransformation (data: object) : object
-#### suffixes: { start: string, success: string, error: string }
+Called in every reducer handling succeeded request. You can use that to apply some global transformations for
+payload data dispatched from the actions before they are save in the store.
 
 Let's see an example, simple dashboard with user posts for next great
 blogging platform. We have few requirements:
