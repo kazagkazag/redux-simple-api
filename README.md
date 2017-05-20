@@ -5,6 +5,24 @@ with redux. It is common problem for many developers - a lot of code
 required to handle asynchronous actions. You can mitigate it using
 `redux-thunk` and `redux-simple-api`.
 
+## API
+
+### init(options: object)
+
+Main function of the RSA. Call this before initialization of the store. Remember, that your
+reducers are created while store initialization, so they have to have access to the
+configuration object. Best practise is to create file within initialization happens and directly
+calling `init()` in that file. See demo for example.
+
+#### beforeRequest (requestConfig: object, dispatch: Function, getState: function) : requestConfig
+#### onResponse (response: object, dispatch: Function, getState: function) : response
+Remove this!
+#### onError (error: object, dispatch: Function, getState: function) : error
+#### onSuccess (response: object, dispatch: Function, getState: function) : response
+#### errorTransformation (error: object) : object
+#### dataTransformation (data: object) : object
+#### suffixes: { start: string, success: string, error: string }
+
 Let's see an example, simple dashboard with user posts for next great
 blogging platform. We have few requirements:
 
