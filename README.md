@@ -133,6 +133,27 @@ init({
 });
 ```
 
+### buildSyncActionCreator(type: string, ...argNames: Array<any>): Function
+
+Creates action creator function - factory for actions with specified type.
+
+```js
+// definition
+const addUser = buildSyncActionCreator("my/action/type", "age", "name");
+
+// usage
+const action = addUser(22, "Bob");
+
+// action:
+{
+    type: "my/action/type",
+    payload: {
+        age: 22,
+        name: "Bob"
+    }
+}
+```
+
 Let's see an example, simple dashboard with user posts for next great
 blogging platform. We have few requirements:
 
