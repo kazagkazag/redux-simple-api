@@ -166,7 +166,7 @@ because of any reason.
 
 Options:
 
-### baseType: string
+#### baseType: string
 
 Type of the base action. `baseType` and `suffixes` (see below) will be used to construct
 types of all three main actions.
@@ -175,11 +175,11 @@ types of all three main actions.
 
 Suffix of the start action. It will be added to the `baseType`. Overrides initial configuration of the RSA.
 
-### successSuffix: string
+#### successSuffix: string
 
 Suffix of the success action. It will be added to the `baseType`. Overrides initial configuration of the RSA.
 
-### failedSuffix: string -----> rename it to the errorSuffix
+#### failedSuffix: string -----> rename it to the errorSuffix
 
 Suffix of the error action. It will be added to the `baseType`. Overrides initial configuration of the RSA.
 
@@ -192,7 +192,13 @@ const addUser = () => request({
     // ... other options
 });
 
-### promisifyError: boolean
+// dispatching above `addUser` will result with dispatching following actions in case of success:
+// `users/add/started` > `users/add/done`
+// or following actions in case of failure:
+// `users/add/started` > `users/add/failed`
+```
+
+#### promisifyError: boolean
 
 If `true`, then errors will handled by `error action` **and** bubble up from the `request()`.
 So you have to use `.catch()` to catch them. If `false` errors will be handled by `error action`
@@ -217,13 +223,13 @@ const addNewuser = () => dispatch =>
 // system will be notified about failed registration
 ```
 
-### takeLatest: boolean
+#### takeLatest: boolean
 
 If `true` only the response from the latest dispatched request will be handled. If `false`
 the latest response will override previously stored data even if that response was received not
 for the last request.
 
-### transformData: (data: any): any
+#### transformData: (data: any): any
 
 Function used to transform `data` property of the response.
 
@@ -241,12 +247,6 @@ const getUsers = () => request({
 
 // only the `users` property will be passed to the success action and stored in `payload.data`
 // of success action
-```
-
-// dispatching above `addUser` will result with dispatching following actions in case of success:
-// `users/add/started` > `users/add/done`
-// or following actions in case of failure:
-// `users/add/started` > `users/add/failed`
 ```
 
 Let's see an example, simple dashboard with user posts for next great
