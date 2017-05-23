@@ -171,15 +171,15 @@ Options:
 Type of the base action. `baseType` and `suffixes` (see below) will be used to construct
 types of all three main actions.
 
-### startSuffix: string
+#### startSuffix: string --> delete
 
 Suffix of the start action. It will be added to the `baseType`. Overrides initial configuration of the RSA.
 
-#### successSuffix: string
+#### successSuffix: string --> delete
 
 Suffix of the success action. It will be added to the `baseType`. Overrides initial configuration of the RSA.
 
-#### failedSuffix: string -----> rename it to the errorSuffix
+#### failedSuffix: string --> delete
 
 Suffix of the error action. It will be added to the `baseType`. Overrides initial configuration of the RSA.
 
@@ -247,6 +247,52 @@ const getUsers = () => request({
 
 // only the `users` property will be passed to the success action and stored in `payload.data`
 // of success action
+```
+
+### buildReducers(options: Object): Object
+
+Creates root reducer for your request, composed of four reducers:
+* `pending` - holds boolean - `true` if request is pending
+* `done` - holds boolean - `true` if last request succeeded
+* `error` - holds object - error object or result of error transformation for last request
+* `data` - holds object - data or result of data transformation for last request
+
+Options:
+
+#### baseType: string
+
+Base type of the action which reducer should handle. Types of the start, success or error action
+will be computed based on `baseType` and suffixes provided in `init()`.
+
+#### customReducers: { pending: Function, done: Function, error: Function, data: Function }
+
+Object with optional custom reducers. You can provide any of those reducer, if you want to
+override default behaviour. Provided function takes one argument: `actionTypes` with properties:
+`{start: string, success: string, error: string}`. Properties hold computed action types for three
+main request actions. Custom reducer should return reducer function able to handle any of those actions.
+
+```js
+const addingUser = buildReducers({
+    baseType: "user/add",
+    customReducers: {
+        error: actionTypes => {
+            return (state = null, action) => {
+                switch(action.type) {
+                    case actionTypes.error:
+                        return "Ups!";
+                    case actionTypes.start:
+                    case actionTypes.success:
+                        return null;
+                    default:
+                        return state;
+                }
+            }
+        }
+    }
+});
+
+// now if request fail, you will always have "Ups!" string in `error` reducer in `addingUser`
+// store property
 ```
 
 Let's see an example, simple dashboard with user posts for next great
