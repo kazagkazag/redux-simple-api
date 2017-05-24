@@ -157,6 +157,7 @@ Creates request which is composed by three main actions:
 * start action
 * success action
 * error action
+
 `start action` is dispatched before making xhr call, `success action` is dispatched
 when response come back with status code 2xx, `error action` is dispatched if request failed
 because of any reason.
@@ -167,18 +168,6 @@ Options:
 
 Type of the base action. `baseType` and `suffixes` (see below) will be used to construct
 types of all three main actions.
-
-#### startSuffix: string --> delete
-
-Suffix of the start action. It will be added to the `baseType`. Overrides initial configuration of the RSA.
-
-#### successSuffix: string --> delete
-
-Suffix of the success action. It will be added to the `baseType`. Overrides initial configuration of the RSA.
-
-#### failedSuffix: string --> delete
-
-Suffix of the error action. It will be added to the `baseType`. Overrides initial configuration of the RSA.
 
 ```js
 const addUser = () => request({

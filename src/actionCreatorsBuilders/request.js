@@ -8,9 +8,6 @@ import queue from "../core/queue";
 
 export default function request(requestConfig: {
     baseType: string,
-    startSuffix?: string,
-    successSuffix?: string,
-    failSuffix?: string,
     promisifyError?: boolean,
     takeLatest?: boolean,
     transformData?: Function
@@ -19,7 +16,7 @@ export default function request(requestConfig: {
         baseType,
         startSuffix,
         successSuffix,
-        failSuffix,
+        errorSuffix,
         promisifyError,
         takeLatest,
         transformData,
@@ -29,7 +26,7 @@ export default function request(requestConfig: {
     const actions = getActions(baseType, {
         startSuffix,
         successSuffix,
-        failSuffix
+        errorSuffix
     });
 
     return (dispatch: Function, getState: Function) => {
@@ -41,7 +38,7 @@ export default function request(requestConfig: {
             queue[baseType] = requestId;
         }
 
-        const defaultErrorHandler = error => dispatch(actions.fail(error));
+        const defaultErrorHandler = error => dispatch(actions.error(error));
         const defaultSuccessHandler = response =>
             dispatch(actions.success(
                 transformData(response.data), response.status
@@ -68,14 +65,14 @@ function getActions(baseType: string, suffixes: Object): Object {
     const types = {
         start: `${baseType}${suffixes.startSuffix}`,
         success: `${baseType}${suffixes.successSuffix}`,
-        fail: `${baseType}${suffixes.failSuffix}`
+        error: `${baseType}${suffixes.errorSuffix}`
     };
 
     return {
         start: buildSyncActionCreator(types.start),
         success: buildSyncActionCreator(types.success, "data", "status"),
-        fail: error => ({
-            type: types.fail,
+        error: error => ({
+            type: types.error,
             payload: error,
             error: true
         })
@@ -91,9 +88,9 @@ function getOptions(config: Object): Object {
 
     return {
         baseType: config.baseType || "no/type",
-        startSuffix: config.startSuffix || start,
-        failSuffix: config.failSuffix || error,
-        successSuffix: config.successSuffix || success,
+        startSuffix: start,
+        errorSuffix: error,
+        successSuffix: success,
         url: config.url || "/defaultUrl",
         baseURL: getBaseURL(config.baseURL),
         method: config.method || "get",

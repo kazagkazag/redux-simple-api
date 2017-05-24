@@ -3,7 +3,6 @@ import thunk from "redux-thunk";
 import nock from "nock";
 import axios from "axios";
 import httpAdapter from "axios/lib/adapters/http";
-import { isFSA } from "flux-standard-action";
 import request from "./request";
 import init from "../core/init";
 import { areActionsInOrder } from "../../tools/testUtils";
@@ -13,16 +12,16 @@ describe("request", () => {
     const store = configureMockStore(middlewares)({});
     const baseType = "my/action";
     const successSuffix = "/done";
-    const failSuffix = "/failed";
+    const errorSuffix = "/failed";
     const startSuffix = "/started";
     const startType = `${baseType}${startSuffix}`;
     const successType = `${baseType}${successSuffix}`;
-    const failType = `${baseType}${failSuffix}`;
+    const errorType = `${baseType}${errorSuffix}`;
     const host = "http://localhost";
     const suffixes = {
         start: startSuffix,
         success: successSuffix,
-        error: failSuffix
+        error: errorSuffix
     };
 
     axios.defaults.host = host;
@@ -57,7 +56,7 @@ describe("request", () => {
 
                 expect(actions.find(action => action.type === startType)).not.toBe(undefined);
                 expect(actions.find(action => action.type === successType)).not.toBe(undefined);
-                expect(actions.find(action => action.type === failType)).toBe(undefined);
+                expect(actions.find(action => action.type === errorType)).toBe(undefined);
             });
     });
 
@@ -76,11 +75,10 @@ describe("request", () => {
             .dispatch(actionCreator())
             .then(() => {
                 const actions = store.getActions();
-                const failAction = actions.find(action => action.type === failType);
 
                 expect(actions.find(action => action.type === startType)).not.toBe(undefined);
+                expect(actions.find(action => action.type === errorType)).not.toBe(undefined);
                 expect(actions.find(action => action.type === successType)).toBe(undefined);
-                expect(isFSA(failAction)).toBeTruthy();
             });
     });
 
@@ -156,7 +154,7 @@ describe("request", () => {
 
                 expect(areActionsInOrder(actions, [
                     startType,
-                    failType,
+                    errorType,
                     `${baseType}/next${startSuffix}`,
                     `${baseType}/next${successSuffix}`
                 ])).toBeTruthy();
@@ -204,11 +202,11 @@ describe("request", () => {
             .dispatch(actionCreator())
             .then(() => {
                 const actions = store.getActions();
-                const failAction = actions.find(action => action.type === failType);
+                const failAction = actions.find(action => action.type === errorType);
 
                 expect(areActionsInOrder(actions, [
                     startType,
-                    failType
+                    errorType
                 ])).toBeTruthy();
 
                 expect(failAction.payload.message).toContain("400");
@@ -285,11 +283,11 @@ describe("request", () => {
             .dispatch(actionCreator())
             .then(() => {
                 const actions = store.getActions();
-                const failAction = actions.find(action => action.type === failType);
+                const failAction = actions.find(action => action.type === errorType);
 
                 expect(areActionsInOrder(actions, [
                     startType,
-                    failType
+                    errorType
                 ])).toBeTruthy();
 
                 expect(failAction.payload.message).toContain("400");
@@ -464,11 +462,11 @@ describe("request", () => {
             .then(() => {
                 const actions = store.getActions();
                 const args = noop.mock.calls[0];
-                const failAction = actions.find(action => action.type === failType);
+                const failAction = actions.find(action => action.type === errorType);
 
                 expect(areActionsInOrder(actions, [
                     startType,
-                    failType
+                    errorType
                 ])).toBeTruthy();
 
                 expect(failAction.payload.meta.inTest).toBeTruthy();
