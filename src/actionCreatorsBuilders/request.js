@@ -58,7 +58,6 @@ export default function request(requestConfig: {
 
         return axios
             .request(transformedConfig)
-            .then(response => rsaConfig.get().onResponse(response, dispatch, getState))
             .then(response => rsaConfig.get().onSuccess(response, dispatch, getState))
             .then(successHandler)
             .catch(getErrorHandler(promisifyError, defaultErrorHandler, customErrorHandler));

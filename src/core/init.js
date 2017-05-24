@@ -3,7 +3,6 @@ import config from "./config";
 
 export default function init(providedOptions: {
     beforeRequest?: Function,
-    onResponse?: Function,
     onError?: Function,
     onSuccess?: Function,
     errorTransformation?: Function,
@@ -16,7 +15,6 @@ export default function init(providedOptions: {
 } = {}): void {
     const defaults = {
         beforeRequest: request => request,
-        onResponse: response => response,
         onError: response => response,
         onSuccess: response => response,
         errorTransformation: error => error,
@@ -29,7 +27,6 @@ export default function init(providedOptions: {
     };
     const options = {
         beforeRequest: providedOptions.beforeRequest || defaults.beforeRequest,
-        onResponse: providedOptions.onResponse || defaults.onResponse,
         onError: providedOptions.onError || defaults.onError,
         onSuccess: providedOptions.onSuccess
             || defaults.onSuccess,

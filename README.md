@@ -66,9 +66,6 @@ init({
 });
 ```
 
-#### onResponse (response: object, dispatch: Function, getState: function) : response
-Remove this!
-
 #### onError (error: object, dispatch: Function, getState: function) : error
 Called when error came from the server. You have access to the provided error and
 you can modify it there or call some additional action. You have to return new error from that function.

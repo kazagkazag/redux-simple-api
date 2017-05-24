@@ -26,17 +26,6 @@ test("should set before request hook in the config", () => {
     expect(config.get().beforeRequest).toEqual(beforeRequest);
 });
 
-test("should set after response hook in the config", () => {
-    const onResponse = function spy() {
-    };
-
-    init({
-        onResponse
-    });
-
-    expect(config.get().onResponse).toEqual(onResponse);
-});
-
 test("should set 'after failed request' hook in the config", () => {
     const onError = function spy() {
     };
