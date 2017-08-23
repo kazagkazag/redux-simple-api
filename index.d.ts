@@ -26,7 +26,8 @@ export interface RequestOptions {
     baseType: string,
     promisifyError?: boolean,
     takeLatest?: boolean,
-    transformData?: (data: any) => any
+    transformData?: (data: any) => any,
+    [propName: string]: any;
 }
 export function request(requestOptions: RequestOptions): (dispatch: () => void, getState: () => any) => Promise<any>;
 
