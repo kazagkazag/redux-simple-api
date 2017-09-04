@@ -2,11 +2,7 @@
 // Project: Redux Simple Api
 // Definitions by: Kamil Zagrabski
 
-export interface BuildSyncActionCreatorOptions {
-    type: string;
-    argNames?: any[];
-}
-export function buildSyncActionCreator(buildSyncActionCreatorOptions: BuildSyncActionCreatorOptions): (...args: any[]) => object;
+export function buildSyncActionCreator(type: string, ...agrs: any[]): () => { type: string, [key: string]: any};
 
 export interface InitOptions {
     beforeRequest?: (request: any) => any;
