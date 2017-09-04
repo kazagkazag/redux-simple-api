@@ -23,10 +23,17 @@ export interface InitOptions {
 export function init(initOptions: InitOptions): void;
 
 export interface RequestOptions {
-    baseType: string,
-    promisifyError?: boolean,
-    takeLatest?: boolean,
-    transformData?: (data: any) => any,
+    baseType: string;
+    promisifyError?: boolean;
+    takeLatest?: boolean;
+    transformData?: (data: any) => any;
+    data: any;
+    params: {
+        [key: string]: any
+    };
+    headers: {
+        [key: string]: any
+    };
     [propName: string]: any;
 }
 export function request(requestOptions: RequestOptions): (dispatch: () => void, getState: () => any) => Promise<any>;

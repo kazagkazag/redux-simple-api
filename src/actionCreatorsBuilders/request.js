@@ -97,7 +97,9 @@ function getOptions(config: Object): Object {
         promisifyError: config.promisifyError,
         takeLatest: config.takeLatest || false,
         transformData: config.transformData || (data => data),
-        params: config.params
+        params: config.params,
+        data: config.data,
+        headers: config.headers
     };
 }
 
