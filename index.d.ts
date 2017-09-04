@@ -27,11 +27,11 @@ export interface RequestOptions {
     promisifyError?: boolean;
     takeLatest?: boolean;
     transformData?: (data: any) => any;
-    data: any;
-    params: {
+    data?: any;
+    params?: {
         [key: string]: any
     };
-    headers: {
+    headers?: {
         [key: string]: any
     };
     [propName: string]: any;
