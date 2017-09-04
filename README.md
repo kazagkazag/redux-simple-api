@@ -7,10 +7,10 @@ required to handle asynchronous actions. You can mitigate it using
 
 ## API
 
-1. [init](#initoptions-object) 
-2. [buildSyncActionCreator](#buildsyncactioncreatortype-string-argnames-array-function)
-3. [request](#request-options-object-function)
-4. [buildReducers](#buildreducersoptions-object-object)
+1. [init](#1-initoptions-object) - initializes library
+2. [buildSyncActionCreator](#2-buildsyncactioncreatortype-string-argnames-array-function) - creates regular action creator
+3. [request](#3-request-options-object-function) - creates action creator that handles API calls
+4. [buildReducers](#4-buildreducersoptions-object-object) - creates reducers that handles results of `request`s
 
 ### 1. init(options: object)
 Main function of the RSA. Call this before initialization of the store. Remember, that your
