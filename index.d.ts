@@ -40,6 +40,7 @@ export function request(requestOptions: RequestOptions): (dispatch: () => void, 
 
 export interface BuildReducersOptions {
     baseType: string,
+    resetType?: string,
     customReducers?: {
         pending?: (state: boolean, action: any) => any,
         done?: (state: boolean, action: any) => any,

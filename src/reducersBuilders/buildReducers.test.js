@@ -167,5 +167,29 @@ describe("buildReducers", () => {
 
         expect(received).toEqual(expected);
     });
+
+    test("should handle reset action", () => {
+        const expected = {
+            pending: false,
+            done: false,
+            data: null,
+            error: null
+        };
+        const reducerWithResetType = buildReducers({
+            baseType,
+            resetType: "reset/action"
+        });
+
+        const received = reducerWithResetType({
+            pending: true,
+            done: true,
+            data: { some: "Data" },
+            error: new Error("some error")
+        }, {
+            type: "reset/action"
+        });
+
+        expect(received).toEqual(expected);
+    });
 });
 
