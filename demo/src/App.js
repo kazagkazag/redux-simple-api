@@ -2,7 +2,7 @@ import React, { Component, PropTypes } from "react";
 import { connect } from "react-redux";
 import { compose } from "redux";
 
-import { initializeDashboard } from "./actions";
+import { initializeDashboard, clearUserPosts } from "./actions";
 
 class App extends Component {
     componentDidMount() {
@@ -14,7 +14,16 @@ class App extends Component {
     }
 
     renderError() {
-        return this.props.failed ? <p>Ups! Errors!</p> : null;
+        return this.props.failed ? (
+            <div>
+                <p>Ups! Errors:</p> 
+                {
+                    this.props.errors.map(error => {
+                        return <p key={error}>{error}</p>
+                    })
+                }
+            </div>
+        ) : null;
     }
 
     renderApp() {
@@ -37,8 +46,9 @@ class App extends Component {
                         );
                     })}
                 </ul>
+                <button onClick={this.props.clearUserPosts}>Clear posts</button>
             </main>
-        ) : null;
+        ) : <p>No posts to display</p>;
     }
 
     render() {
@@ -58,7 +68,8 @@ App.propTypes = {
 
 function mapDispatchToProps(dispatch) {
     return {
-        initializeDashboard: compose(dispatch, initializeDashboard)
+        initializeDashboard: compose(dispatch, initializeDashboard),
+        clearUserPosts: compose(dispatch, clearUserPosts)
     };
 }
 
@@ -67,7 +78,10 @@ function mapStateToProps(state) {
         user: state.user.data,
         posts: state.posts.data,
         loading: state.posts.pending || state.user.pending,
-        failed: state.posts.error !== null || state.user.error !== null
+        failed: state.posts.error !== null || state.user.error !== null,
+        errors: state.posts.error || state.user.error
+            ? (state.posts.error || []).concat(state.user.error || [])
+            : []
     };
 }
 

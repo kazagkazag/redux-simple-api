@@ -1,18 +1,20 @@
 const restify = require("restify");
 
 function getUser(req, res, next) {
-    res.send({
+    res.send(200, {
         name: "John",
         age: "24",
         role: "author",
         id: "1"
+    },{
+        "session-token": "New token generated at " + new Date().getTime()
     });
     next();
 }
 
 function getPosts(req, res, next) {
     if (Math.random() > 0.5) {
-        res.send({
+        res.send(200, {
             posts: [
                 {
                     id: 1,
@@ -23,6 +25,8 @@ function getPosts(req, res, next) {
                     title: "Second post"
                 }
             ]
+        }, {
+            "session-token": "New token generated at " + new Date().getTime()
         });
     } else {
         res.send(400, {
@@ -30,6 +34,8 @@ function getPosts(req, res, next) {
                 "Error while fetching data from DB.",
                 "DB connection aborted."
             ]
+        }, {
+            "session-token": "New token generated at " + new Date().getTime()
         });
     }
     next();
