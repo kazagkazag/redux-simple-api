@@ -5,9 +5,9 @@
 export function buildSyncActionCreator(type: string, ...agrs: any[]): (args?: any[]) => { type: string, [key: string]: any};
 
 export interface InitOptions {
-    beforeRequest?: (request: any) => any;
+    beforeRequest?: (request: any, dispatch: (...args: any[]) => any, getState: () => any) => any;
     onError?: (request: any) => any;
-    onSuccess?: (request: any) => any;
+    onSuccess?: (request: any, dispatch: (...args: any[]) => any) => any;
     errorTransformation?: (request: any) => any;
     dataTransformation?: (request: any) => any;
     suffixes?: {
