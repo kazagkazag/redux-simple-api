@@ -45,3 +45,12 @@ export interface BuildReducersOptions {
     }
 }
 export function buildReducers(buildReducersOptions: BuildReducersOptions): (state: any, action: any) => any;
+
+export interface RemoteResource {
+    done: boolean;
+    pending: boolean;
+    error: any;
+    data: any;
+}
+
+export function createInitialRemoteResource(): RemoteResource;
