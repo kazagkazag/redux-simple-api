@@ -4,7 +4,7 @@
     <head>
         <meta charset="UTF-8">
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-        <title>Introduction · GitBook</title>
+        <title>buildReducers · GitBook</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
         <meta name="generator" content="GitBook 3.2.3">
@@ -57,8 +57,10 @@
     <link rel="shortcut icon" href="gitbook/images/favicon.ico" type="image/x-icon">
 
     
-    <link rel="next" href="INIT.html" />
+    <link rel="next" href="UTILS.md" />
     
+    
+    <link rel="prev" href="REQUEST.html" />
     
 
     </head>
@@ -87,7 +89,7 @@
         
         
     
-        <li class="chapter active" data-level="1.1" data-path="./">
+        <li class="chapter " data-level="1.1" data-path="./">
             
                 <a href="./">
             
@@ -146,7 +148,7 @@
             
         </li>
     
-        <li class="chapter " data-level="2.4" data-path="BUILDREDUCERS.html">
+        <li class="chapter active" data-level="2.4" data-path="BUILDREDUCERS.html">
             
                 <a href="BUILDREDUCERS.html">
             
@@ -202,7 +204,7 @@
     <!-- Title -->
     <h1>
         <i class="fa fa-circle-o-notch fa-spin"></i>
-        <a href="." >Introduction</a>
+        <a href="." >buildReducers</a>
     </h1>
 </div>
 
@@ -217,29 +219,49 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h1 id="redux-simple-api">Redux Simple Api</h1>
-<p>Redux Simple Api (<strong>RSA</strong>) is a library that helps handling requests
-with redux. It is common problem for many developers - a lot of code
-required to handle asynchronous actions. You can mitigate it using
-<code>redux-thunk</code> and <code>redux-simple-api</code>.</p>
-<p><code>rsa</code> libary can be used with any redux-compatible view library, but it was
-tested only with React.</p>
-<h2 id="installation">Installation</h2>
-<p>You can install <code>redux-simple-api</code> using npm:</p>
-<pre><code>npm install --save-dev redux-simple-api
-</code></pre><h2 id="usage">Usage</h2>
+                                <h1 id="4-buildreducersoptions-object-object">4. buildReducers(options: Object): Object</h1>
+<p>Creates root reducer for your request, composed of four reducers:</p>
 <ul>
-<li>If you don&apos;t know how to start, jump to <a href="example">Example</a> chapter to see real life code with simple
-application.</li>
-<li>If you are looking for documentation details, read <code>Api</code> section below.</li>
+<li><code>pending</code> - holds boolean - <code>true</code> if request is pending</li>
+<li><code>done</code> - holds boolean - <code>true</code> if last request succeeded</li>
+<li><code>error</code> - holds object - error object or result of error transformation for last request</li>
+<li><code>data</code> - holds object - data or result of data transformation for last request</li>
 </ul>
-<h2 id="api">API</h2>
-<ol>
-<li><a href="#1-initoptions-object">init</a> - initializes library</li>
-<li><a href="#2-buildsyncactioncreatortype-string-argnames-array-function">buildSyncActionCreator</a> - creates regular action creator</li>
-<li><a href="#3-request-options-object-function">request</a> - creates action creator that handles API calls</li>
-<li><a href="#4-buildreducersoptions-object-object">buildReducers</a> - creates reducers that handles results of <code>request</code>s</li>
-</ol>
+<h2 id="options">Options:</h2>
+<h4 id="basetype-string">baseType: string</h4>
+<p>Base type of the action which reducer should handle. Types of the start, success or error action
+will be computed based on <code>baseType</code> and suffixes provided in <code>init()</code>.</p>
+<h4 id="resettype-string">resetType: string</h4>
+<p>Type of the action that causes reset of the reducers state, if built in reducers are used.
+If you wan&apos;t to reset custom reducers, you should handle <code>actionType.reset</code> in custom reducer
+(see below).</p>
+<h4 id="customreducers--pending-function-done-function-error-function-data-function-">customReducers: { pending: Function, done: Function, error: Function, data: Function }</h4>
+<p>Object with optional custom reducers. You can provide any of those reducer, if you want to
+override default behaviour. Provided function takes one argument: <code>actionTypes</code> with properties:
+<code>{start: string, success: string, error: string}</code>. Properties hold computed action types for three
+main request actions. Custom reducer should return reducer function able to handle any of those actions.</p>
+<pre><code class="lang-js"><span class="hljs-keyword">const</span> addingUser = buildReducers({
+    baseType: <span class="hljs-string">&quot;user/add&quot;</span>,
+    customReducers: {
+        error: actionTypes =&gt; {
+            <span class="hljs-keyword">return</span> (state = <span class="hljs-literal">null</span>, action) =&gt; {
+                <span class="hljs-keyword">switch</span>(action.type) {
+                    <span class="hljs-keyword">case</span> actionTypes.error:
+                        <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;Ups!&quot;</span>;
+                    <span class="hljs-keyword">case</span> actionTypes.start:
+                    <span class="hljs-keyword">case</span> actionTypes.success:
+                        <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
+                    <span class="hljs-keyword">default</span>:
+                        <span class="hljs-keyword">return</span> state;
+                }
+            }
+        }
+    }
+});
+
+<span class="hljs-comment">// now if request fail, you will always have &quot;Ups!&quot; string in `error` reducer in `addingUser`</span>
+<span class="hljs-comment">// store property</span>
+</code></pre>
 
                                 
                                 </section>
@@ -267,8 +289,12 @@ application.</li>
 
             
                 
+                <a href="REQUEST.html" class="navigation navigation-prev " aria-label="Previous page: request">
+                    <i class="fa fa-angle-left"></i>
+                </a>
                 
-                <a href="INIT.html" class="navigation navigation-next navigation-unique" aria-label="Next page: init">
+                
+                <a href="UTILS.md" class="navigation navigation-next " aria-label="Next page: utils">
                     <i class="fa fa-angle-right"></i>
                 </a>
                 
@@ -279,7 +305,7 @@ application.</li>
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Introduction","level":"1.1","depth":1,"next":{"title":"init","level":"2.1","depth":1,"path":"INIT.md","ref":"INIT.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"README.md","mtime":"2018-01-13T14:29:17.963Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-01-13T14:34:22.201Z"},"basePath":".","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"buildReducers","level":"2.4","depth":1,"next":{"title":"utils","level":"2.5","depth":1,"path":"UTILS.md","ref":"UTILS.md","articles":[]},"previous":{"title":"request","level":"2.3","depth":1,"path":"REQUEST.md","ref":"REQUEST.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"BUILDREDUCERS.md","mtime":"2018-01-13T14:33:34.051Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-01-13T14:34:22.201Z"},"basePath":".","book":{"language":""}});
         });
     </script>
 </div>

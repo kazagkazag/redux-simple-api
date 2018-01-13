@@ -4,7 +4,7 @@
     <head>
         <meta charset="UTF-8">
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-        <title>Introduction · GitBook</title>
+        <title>buildSyncActionCreator · GitBook</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
         <meta name="generator" content="GitBook 3.2.3">
@@ -57,8 +57,10 @@
     <link rel="shortcut icon" href="gitbook/images/favicon.ico" type="image/x-icon">
 
     
-    <link rel="next" href="INIT.html" />
+    <link rel="next" href="REQUEST.html" />
     
+    
+    <link rel="prev" href="INIT.html" />
     
 
     </head>
@@ -87,7 +89,7 @@
         
         
     
-        <li class="chapter active" data-level="1.1" data-path="./">
+        <li class="chapter " data-level="1.1" data-path="./">
             
                 <a href="./">
             
@@ -120,7 +122,7 @@
             
         </li>
     
-        <li class="chapter " data-level="2.2" data-path="BUILDSYNCACTIONCREATOR.html">
+        <li class="chapter active" data-level="2.2" data-path="BUILDSYNCACTIONCREATOR.html">
             
                 <a href="BUILDSYNCACTIONCREATOR.html">
             
@@ -202,7 +204,7 @@
     <!-- Title -->
     <h1>
         <i class="fa fa-circle-o-notch fa-spin"></i>
-        <a href="." >Introduction</a>
+        <a href="." >buildSyncActionCreator</a>
     </h1>
 </div>
 
@@ -217,29 +219,26 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h1 id="redux-simple-api">Redux Simple Api</h1>
-<p>Redux Simple Api (<strong>RSA</strong>) is a library that helps handling requests
-with redux. It is common problem for many developers - a lot of code
-required to handle asynchronous actions. You can mitigate it using
-<code>redux-thunk</code> and <code>redux-simple-api</code>.</p>
-<p><code>rsa</code> libary can be used with any redux-compatible view library, but it was
-tested only with React.</p>
-<h2 id="installation">Installation</h2>
-<p>You can install <code>redux-simple-api</code> using npm:</p>
-<pre><code>npm install --save-dev redux-simple-api
-</code></pre><h2 id="usage">Usage</h2>
-<ul>
-<li>If you don&apos;t know how to start, jump to <a href="example">Example</a> chapter to see real life code with simple
-application.</li>
-<li>If you are looking for documentation details, read <code>Api</code> section below.</li>
-</ul>
-<h2 id="api">API</h2>
-<ol>
-<li><a href="#1-initoptions-object">init</a> - initializes library</li>
-<li><a href="#2-buildsyncactioncreatortype-string-argnames-array-function">buildSyncActionCreator</a> - creates regular action creator</li>
-<li><a href="#3-request-options-object-function">request</a> - creates action creator that handles API calls</li>
-<li><a href="#4-buildreducersoptions-object-object">buildReducers</a> - creates reducers that handles results of <code>request</code>s</li>
-</ol>
+                                <h1 id="2-buildsyncactioncreatortype-string-argnames-array-function">2. buildSyncActionCreator(type: string, ...argNames: Array<any>): Function</any></h1>
+<p>Creates action creator function - factory for actions with specified type.</p>
+<pre><code class="lang-js"><span class="hljs-comment">// definition</span>
+<span class="hljs-keyword">const</span> addUser = buildSyncActionCreator(<span class="hljs-string">&quot;my/action/type&quot;</span>, <span class="hljs-string">&quot;age&quot;</span>, <span class="hljs-string">&quot;name&quot;</span>);
+
+<span class="hljs-comment">// usage</span>
+<span class="hljs-keyword">const</span> action = addUser(<span class="hljs-number">22</span>, <span class="hljs-string">&quot;Bob&quot;</span>);
+dispatch(action);
+<span class="hljs-comment">// or</span>
+dispatch(addUser(<span class="hljs-number">22</span>, <span class="hljs-string">&quot;Bob&quot;</span>));
+
+<span class="hljs-comment">// action:</span>
+{
+    type: <span class="hljs-string">&quot;my/action/type&quot;</span>,
+    payload: {
+        age: <span class="hljs-number">22</span>,
+        name: <span class="hljs-string">&quot;Bob&quot;</span>
+    }
+}
+</code></pre>
 
                                 
                                 </section>
@@ -267,8 +266,12 @@ application.</li>
 
             
                 
+                <a href="INIT.html" class="navigation navigation-prev " aria-label="Previous page: init">
+                    <i class="fa fa-angle-left"></i>
+                </a>
                 
-                <a href="INIT.html" class="navigation navigation-next navigation-unique" aria-label="Next page: init">
+                
+                <a href="REQUEST.html" class="navigation navigation-next " aria-label="Next page: request">
                     <i class="fa fa-angle-right"></i>
                 </a>
                 
@@ -279,7 +282,7 @@ application.</li>
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Introduction","level":"1.1","depth":1,"next":{"title":"init","level":"2.1","depth":1,"path":"INIT.md","ref":"INIT.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"README.md","mtime":"2018-01-13T14:29:17.963Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-01-13T14:34:22.201Z"},"basePath":".","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"buildSyncActionCreator","level":"2.2","depth":1,"next":{"title":"request","level":"2.3","depth":1,"path":"REQUEST.md","ref":"REQUEST.md","articles":[]},"previous":{"title":"init","level":"2.1","depth":1,"path":"INIT.md","ref":"INIT.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"BUILDSYNCACTIONCREATOR.md","mtime":"2018-01-13T14:32:31.927Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-01-13T14:34:22.201Z"},"basePath":".","book":{"language":""}});
         });
     </script>
 </div>

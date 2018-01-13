@@ -1,0 +1,371 @@
+
+<!DOCTYPE HTML>
+<html lang="" >
+    <head>
+        <meta charset="UTF-8">
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <title>request · GitBook</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="">
+        <meta name="generator" content="GitBook 3.2.3">
+        
+        
+        
+    
+    <link rel="stylesheet" href="gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="gitbook/gitbook-plugin-highlight/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="gitbook/gitbook-plugin-search/search.css">
+                
+            
+                
+                <link rel="stylesheet" href="gitbook/gitbook-plugin-fontsettings/website.css">
+                
+            
+        
+
+    
+
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+        
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    <link rel="next" href="BUILDREDUCERS.html" />
+    
+    
+    <link rel="prev" href="BUILDSYNCACTIONCREATOR.html" />
+    
+
+    </head>
+    <body>
+        
+<div class="book">
+    <div class="book-summary">
+        
+            
+<div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search" />
+</div>
+
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+
+    
+
+    
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="./">
+            
+                <a href="./">
+            
+                    
+                    Introduction
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">API</li>
+        
+        
+    
+        <li class="chapter " data-level="2.1" data-path="INIT.html">
+            
+                <a href="INIT.html">
+            
+                    
+                    init
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.2" data-path="BUILDSYNCACTIONCREATOR.html">
+            
+                <a href="BUILDSYNCACTIONCREATOR.html">
+            
+                    
+                    buildSyncActionCreator
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter active" data-level="2.3" data-path="REQUEST.html">
+            
+                <a href="REQUEST.html">
+            
+                    
+                    request
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.4" data-path="BUILDREDUCERS.html">
+            
+                <a href="BUILDREDUCERS.html">
+            
+                    
+                    buildReducers
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.5" data-path="UTILS.md">
+            
+                <span>
+            
+                    
+                    utils
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://www.gitbook.com" target="blank" class="gitbook-link">
+            Published with GitBook
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href="." >request</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+<div id="book-search-results">
+    <div class="search-noresults">
+    
+                                <section class="normal markdown-section">
+                                
+                                <h1 id="3-request-options-object-function">3. request (options: Object): Function</h1>
+<p>Creates request which is composed by three main actions:</p>
+<ul>
+<li>start action</li>
+<li>success action</li>
+<li>error action</li>
+</ul>
+<p><code>start action</code> is dispatched before making xhr call, <code>success action</code> is dispatched
+when response come back with status code 2xx, <code>error action</code> is dispatched if request failed
+because of any reason.</p>
+<p>It uses axios internally, so you can pass a lot of axios options, like <code>params</code>, <code>data</code>,
+<code>method</code>.</p>
+<p>Options:</p>
+<h4 id="basetype-string">baseType: string</h4>
+<p>Type of the base action. <code>baseType</code> and <code>suffixes</code> (see below) will be used to construct
+types of all three main actions.</p>
+<pre><code class="lang-js"><span class="hljs-keyword">const</span> addUser = () =&gt; request({
+    baseType: <span class="hljs-string">&quot;users/add&quot;</span>,
+    startSuffix: <span class="hljs-string">&quot;/started&quot;</span>,
+    successSuffix: <span class="hljs-string">&quot;/done&quot;</span>,
+    failedSuffix: <span class="hljs-string">&quot;/failed&quot;</span>,
+    <span class="hljs-comment">// ... other options</span>
+});
+
+<span class="hljs-comment">// dispatching above `addUser` will result with dispatching following actions in case of success:</span>
+<span class="hljs-comment">// `users/add/started` &gt; `users/add/done`</span>
+<span class="hljs-comment">// or following actions in case of failure:</span>
+<span class="hljs-comment">// `users/add/started` &gt; `users/add/failed`</span>
+</code></pre>
+<h4 id="promisifyerror-boolean">promisifyError: boolean</h4>
+<p>If <code>true</code>, then errors will handled by <code>error action</code> <strong>and</strong> bubble up from the <code>request()</code>.
+So you have to use <code>.catch()</code> to catch them. If <code>false</code> errors will be handled by <code>error action</code>
+and they will <strong>not</strong> bubble up from the <code>request()</code>, so you have no possibility to chain next
+action in case of failure of the first action.</p>
+<pre><code class="lang-js"><span class="hljs-keyword">const</span> addUser = () =&gt; request({
+    promisifyError: <span class="hljs-literal">true</span>,
+    <span class="hljs-comment">// ... other options</span>
+});
+
+<span class="hljs-keyword">const</span> notifyAboutFailedRegistration = () =&gt; request({
+    <span class="hljs-comment">// ... options</span>
+});
+
+<span class="hljs-keyword">const</span> addNewuser = () =&gt; dispatch =&gt;
+    dispatch(addUser())
+        .catch(() =&gt; dispatch(notifyAboutFailedRegistration());
+
+<span class="hljs-comment">// now you can dispatch `addNewUser` and if adding new user fail,</span>
+<span class="hljs-comment">// system will be notified about failed registration</span>
+</code></pre>
+<h4 id="takelatest-boolean">takeLatest: boolean</h4>
+<p>If <code>true</code> only the response from the latest dispatched request will be handled. If <code>false</code>
+the latest response will override previously stored data even if that response was received not
+for the last request.</p>
+<h4 id="transformdata-data-any-any">transformData: (data: any): any</h4>
+<p>Function used to transform <code>data</code> property of the response.</p>
+<pre><code class="lang-js"><span class="hljs-keyword">const</span> getUsers = () =&gt; request({
+    transformData: data =&gt; data.users
+});
+
+<span class="hljs-comment">// if backend will response with following object:</span>
+
+{
+    users: [...] <span class="hljs-comment">//list of users</span>
+    meta: {...} <span class="hljs-comment">// some metadata, timestamp etc</span>
+}
+
+<span class="hljs-comment">// only the `users` property will be passed to the success action and stored in `payload.data`</span>
+<span class="hljs-comment">// of success action</span>
+</code></pre>
+
+                                
+                                </section>
+                            
+    </div>
+    <div class="search-results">
+        <div class="has-results">
+            
+            <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+            <ul class="search-results-list"></ul>
+            
+        </div>
+        <div class="no-results">
+            
+            <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+            
+        </div>
+    </div>
+</div>
+
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                <a href="BUILDSYNCACTIONCREATOR.html" class="navigation navigation-prev " aria-label="Previous page: buildSyncActionCreator">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+                <a href="BUILDREDUCERS.html" class="navigation navigation-next " aria-label="Next page: buildReducers">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"request","level":"2.3","depth":1,"next":{"title":"buildReducers","level":"2.4","depth":1,"path":"BUILDREDUCERS.md","ref":"BUILDREDUCERS.md","articles":[]},"previous":{"title":"buildSyncActionCreator","level":"2.2","depth":1,"path":"BUILDSYNCACTIONCREATOR.md","ref":"BUILDSYNCACTIONCREATOR.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"REQUEST.md","mtime":"2018-01-13T14:33:15.204Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-01-13T14:34:22.201Z"},"basePath":".","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    <script src="gitbook/gitbook.js"></script>
+    <script src="gitbook/theme.js"></script>
+    
+        
+        <script src="gitbook/gitbook-plugin-search/search-engine.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-search/search.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-lunr/lunr.min.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-lunr/search-lunr.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-sharing/buttons.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-fontsettings/fontsettings.js"></script>
+        
+    
+
+    </body>
+</html>
+
