@@ -1,0 +1,557 @@
+
+<!DOCTYPE HTML>
+<html lang="" >
+    <head>
+        <meta charset="UTF-8">
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <title>Demo app · GitBook</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="">
+        <meta name="generator" content="GitBook 3.2.3">
+        
+        
+        
+    
+    <link rel="stylesheet" href="gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="gitbook/gitbook-plugin-highlight/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="gitbook/gitbook-plugin-search/search.css">
+                
+            
+                
+                <link rel="stylesheet" href="gitbook/gitbook-plugin-fontsettings/website.css">
+                
+            
+        
+
+    
+
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+        
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    
+    <link rel="prev" href="UTILS.html" />
+    
+
+    </head>
+    <body>
+        
+<div class="book">
+    <div class="book-summary">
+        
+            
+<div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search" />
+</div>
+
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+
+    
+
+    
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="./">
+            
+                <a href="./">
+            
+                    
+                    Introduction
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">API</li>
+        
+        
+    
+        <li class="chapter " data-level="2.1" data-path="INIT.html">
+            
+                <a href="INIT.html">
+            
+                    
+                    init
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.2" data-path="BUILDSYNCACTIONCREATOR.html">
+            
+                <a href="BUILDSYNCACTIONCREATOR.html">
+            
+                    
+                    buildSyncActionCreator
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.3" data-path="REQUEST.html">
+            
+                <a href="REQUEST.html">
+            
+                    
+                    request
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.4" data-path="BUILDREDUCERS.html">
+            
+                <a href="BUILDREDUCERS.html">
+            
+                    
+                    buildReducers
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.5" data-path="UTILS.html">
+            
+                <a href="UTILS.html">
+            
+                    
+                    utils
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">Examples</li>
+        
+        
+    
+        <li class="chapter active" data-level="3.1" data-path="DEMOAPP.html">
+            
+                <a href="DEMOAPP.html">
+            
+                    
+                    Demo app
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://www.gitbook.com" target="blank" class="gitbook-link">
+            Published with GitBook
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href="." >Demo app</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+<div id="book-search-results">
+    <div class="search-noresults">
+    
+                                <section class="normal markdown-section">
+                                
+                                <h1 id="demo-application">Demo application</h1>
+<p>We will create simple application, that displays list of user&apos;s posts.
+There are few requirements:</p>
+<ol>
+<li>Application must retrieve session token from response and pass that token to next request.</li>
+<li>Application must logout user if something bad happened.</li>
+<li>Application should provide way to clear list of posts from UI.</li>
+</ol>
+<p>Let&apos;s start!</p>
+<h2 id="indexjsx">index.jsx</h2>
+<p>We should create our entrypoint. Keep it simple:</p>
+<pre><code class="lang-jsx"><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;react&quot;</span>;
+<span class="hljs-keyword">import</span> ReactDOM <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;react-dom&quot;</span>;
+<span class="hljs-keyword">import</span> { Provider } <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;react-redux&quot;</span>;
+
+<span class="hljs-keyword">import</span> <span class="hljs-string">&quot;./api&quot;</span>; <span class="hljs-comment">// import redux-simple-api initiazation file before importing store!</span>
+<span class="hljs-keyword">import</span> configureStore <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;./store&quot;</span>;
+<span class="hljs-keyword">import</span> App <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;./App&quot;</span>;
+
+ReactDOM.render(
+    <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">Provider</span> <span class="hljs-attr">store</span>=<span class="hljs-string">{configureStore()}</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">App</span> /&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">Provider</span>&gt;</span>,
+    document.getElementById(&quot;root&quot;)
+);
+</span></code></pre>
+<h2 id="appjsx">App.jsx</h2>
+<p>Create simple list of posts:</p>
+<pre><code class="lang-jsx"><span class="hljs-keyword">import</span> React, { Component } <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;react&quot;</span>;
+<span class="hljs-keyword">import</span> { PropTypes } <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;prop-types&quot;</span>;
+<span class="hljs-keyword">import</span> { connect } <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;react-redux&quot;</span>;
+<span class="hljs-keyword">import</span> { compose } <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;redux&quot;</span>;
+
+<span class="hljs-keyword">import</span> { initializeDashboard, clearUserPosts } <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;./actions&quot;</span>;
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">App</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Component</span> </span>{
+    componentDidMount() {
+        <span class="hljs-comment">// initialize dashboard for user with ID 1</span>
+        <span class="hljs-keyword">this</span>.props.initializeDashboard(<span class="hljs-number">1</span>);
+    }
+
+    render() {
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.renderLoader()
+            || <span class="hljs-keyword">this</span>.renderApp();
+    }
+
+    renderLoader() {
+        <span class="hljs-comment">// if request is pending, render loader</span>
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.props.loading ? <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>Loading...<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span></span> : <span class="hljs-literal">null</span>;
+    }
+
+    renderApp() {
+        <span class="hljs-keyword">const</span> {
+            user,
+            posts
+        } = <span class="hljs-keyword">this</span>.props;
+
+        <span class="hljs-keyword">return</span> user &amp;&amp; posts ? (
+            <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">main</span>&gt;</span>
+                <span class="hljs-tag">&lt;<span class="hljs-name">header</span>&gt;</span>
+                    <span class="hljs-tag">&lt;<span class="hljs-name">h1</span>&gt;</span>User {user.name} (as {user.role})<span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span>
+                <span class="hljs-tag">&lt;/<span class="hljs-name">header</span>&gt;</span>
+                <span class="hljs-tag">&lt;<span class="hljs-name">ul</span>&gt;</span>
+                    {posts.map(post =&gt; {
+                        return (
+                            <span class="hljs-tag">&lt;<span class="hljs-name">li</span> <span class="hljs-attr">key</span>=<span class="hljs-string">{post.id}</span>&gt;</span>
+                                {post.title}
+                            <span class="hljs-tag">&lt;/<span class="hljs-name">li</span>&gt;</span>
+                        );
+                    })}
+                <span class="hljs-tag">&lt;/<span class="hljs-name">ul</span>&gt;</span>
+                <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">onClick</span>=<span class="hljs-string">{this.props.clearUserPosts}</span>&gt;</span>
+                    Clear posts
+                <span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+            <span class="hljs-tag">&lt;/<span class="hljs-name">main</span>&gt;</span></span>
+        ) : <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>No posts to display<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span></span>;
+    }
+}
+
+App.propTypes = {
+    initializeDashboard: PropTypes.func,
+    user: PropTypes.object,
+    posts: PropTypes.array,
+    loading: PropTypes.bool
+};
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">mapDispatchToProps</span>(<span class="hljs-params">dispatch</span>) </span>{
+    <span class="hljs-keyword">return</span> {
+        initializeDashboard: compose(dispatch, initializeDashboard),
+        clearUserPosts: compose(dispatch, clearUserPosts)
+    };
+}
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">mapStateToProps</span>(<span class="hljs-params">state</span>) </span>{
+    <span class="hljs-keyword">return</span> {
+        user: state.user.data,
+        posts: state.posts.data,
+        loading: state.posts.pending || state.user.pending
+    };
+}
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(App);
+</code></pre>
+<h2 id="apijs">api.js</h2>
+<p>Ok, but for now our app won&apos;t work. Let&apos;s initialize api:</p>
+<pre><code class="lang-js"><span class="hljs-keyword">import</span> { init } <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;redux-simple-api&quot;</span>;
+<span class="hljs-keyword">import</span> { setToken } <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;./actions&quot;</span>;
+
+init({
+    <span class="hljs-comment">// important: set suffixes!</span>
+    suffixes: {
+        start: <span class="hljs-string">&quot;/start&quot;</span>,
+        success: <span class="hljs-string">&quot;/success&quot;</span>,
+        error: <span class="hljs-string">&quot;/error&quot;</span>
+    },
+    <span class="hljs-comment">// our backend returns errors wrapped in &apos;reasons&apos; array</span>
+    <span class="hljs-comment">// so extract that array from http response (it&apos;s axios construct)</span>
+    errorTransformation: error =&gt; error.response.data.reasons,
+    <span class="hljs-comment">// before every request we have to get actual token from store</span>
+    <span class="hljs-comment">// and append it to custom header</span>
+    beforeRequest: (requestConfig, dispatch, getState) =&gt; {
+        <span class="hljs-keyword">const</span> reqConfig = {
+            ...requestConfig
+        };
+        reqConfig.headers = reqConfig.headers || {};
+        reqConfig.headers[<span class="hljs-string">&quot;session-token&quot;</span>] = getState().security.token;
+
+        <span class="hljs-keyword">return</span> reqConfig;
+    },
+    <span class="hljs-comment">// on response we must set new token from response headers</span>
+    onSuccess: (response, dispatch) =&gt; {
+        dispatch({
+            type: setToken,
+            payload: {
+                token: response.headers[<span class="hljs-string">&quot;session-token&quot;</span>]
+            }
+        });
+
+        <span class="hljs-keyword">return</span> response;
+    }
+});
+</code></pre>
+<h3 id="reduxjs">redux.js</h3>
+<p><code>redux-simple-api</code> initialized, now we should use <code>rsa</code> to create actions and reducers.
+For simplicity we will keep those in one file (not recommended in real apps!).</p>
+<pre><code class="lang-js"><span class="hljs-keyword">import</span> { combineReducers } <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;redux&quot;</span>;
+<span class="hljs-keyword">import</span> {buildSyncActionCreator, request, buildReducers} <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;redux-simple-api&quot;</span>;
+<span class="hljs-keyword">import</span> * <span class="hljs-keyword">as</span> urls <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;./urls&quot;</span>; <span class="hljs-comment">// imagined file with map of endpoint&apos;s urls</span>
+
+<span class="hljs-comment">// 1. types</span>
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> userData = <span class="hljs-string">&quot;user/data&quot;</span>;
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> userLogout = <span class="hljs-string">&quot;user/logout&quot;</span>;
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> setToken = <span class="hljs-string">&quot;security/setToken&quot;</span>;
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> allPosts = <span class="hljs-string">&quot;posts/all&quot;</span>;
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> clearPosts = <span class="hljs-string">&quot;posts/clear&quot;</span>;
+
+<span class="hljs-comment">// 2. action creators for requests</span>
+
+<span class="hljs-keyword">const</span> getUserData = userId =&gt; request({
+    baseType: userData,
+    url: <span class="hljs-string">`urls.userData/<span class="hljs-subst">${userId}</span>`</span>,
+    promisifyError: <span class="hljs-literal">true</span> <span class="hljs-comment">// important, otherwise error will be swallowed and you won&apos;t be able to catch!</span>
+});
+
+<span class="hljs-keyword">const</span> logoutUser = userId =&gt; request({
+    baseType: userLogout,
+    url: urls.userLogout,
+    method: <span class="hljs-string">&quot;post&quot;</span>,
+    data: { userId }
+});
+
+<span class="hljs-keyword">const</span> getPostsForUser = userId =&gt; request({
+    baseType: allPosts,
+    url: <span class="hljs-string">`<span class="hljs-subst">${urls.allPosts}</span>/user/<span class="hljs-subst">${userId}</span>`</span>,
+    promisifyError: <span class="hljs-literal">true</span>,
+    transformData: data =&gt; data.posts
+});
+
+<span class="hljs-comment">// 3. two main actions:</span>
+<span class="hljs-comment">// a) simple synchronous action to clear user&apos;s posts</span>
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> clearUserPosts = buildSyncActionCreator(clearPosts);
+
+<span class="hljs-comment">// b) action to fetch user data, and then get user&apos;s posts</span>
+<span class="hljs-comment">// or if something failed - logout user</span>
+<span class="hljs-comment">// You can see how simple is chaining actions to create real-life</span>
+<span class="hljs-comment">// business flow</span>
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> initializeDashboard = userId =&gt; dispatch =&gt;
+    dispatch(getUserData(userId))
+        .then(() =&gt; dispatch(getPostsForUser(userId)))
+        .catch(() =&gt; dispatch(logoutUser(userId)));
+
+<span class="hljs-comment">// 4. reducer</span>
+<span class="hljs-keyword">const</span> user = buildReducers({
+    baseType: userData
+});
+
+<span class="hljs-keyword">const</span> posts = buildReducers({
+    baseType: allPosts,
+    resetType: clearPosts <span class="hljs-comment">// note, that action with type &apos;clearPosts&apos; will clear reducer state!</span>
+});
+
+<span class="hljs-keyword">const</span> token = (state = <span class="hljs-string">&quot;&quot;</span>, action) =&gt; {
+    <span class="hljs-comment">// regular token reducer for custom action dispatched from init()</span>
+}
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> rootReducer = combineReducers({
+    user,
+    posts,
+    security: combineReducers({
+        token
+    })
+});
+</code></pre>
+<h3 id="storejs">store.js</h3>
+<p>Last thing, store configuration, nothing fancy here. <strong>Just remember - you have to
+initialize api first (see <code>index.js</code>). Otherwise app will crash, because in that
+file below you are requireing reducers, and they are created by <code>rsa</code>, so they
+have to know at that point what configuration is provided for <code>rsa</code>.</strong></p>
+<pre><code class="lang-js"><span class="hljs-keyword">import</span> { createStore, applyMiddleware, compose } <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;redux&quot;</span>;
+<span class="hljs-keyword">import</span> { createLogger } <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;redux-logger&quot;</span>;
+<span class="hljs-keyword">import</span> thunkMiddleware <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;redux-thunk&quot;</span>;
+<span class="hljs-keyword">import</span> { rootReducer } <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;./redux&quot;</span>;
+
+<span class="hljs-keyword">const</span> loggerMiddleware = createLogger();
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">configureStore</span>(<span class="hljs-params">initialState</span>) </span>{
+    <span class="hljs-keyword">const</span> store = createStore(
+        rootReducer,
+        initialState,
+        compose(
+            applyMiddleware(
+                thunkMiddleware,
+                loggerMiddleware
+            )
+        )
+    );
+    <span class="hljs-keyword">return</span> store;
+}
+</code></pre>
+
+                                
+                                </section>
+                            
+    </div>
+    <div class="search-results">
+        <div class="has-results">
+            
+            <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+            <ul class="search-results-list"></ul>
+            
+        </div>
+        <div class="no-results">
+            
+            <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+            
+        </div>
+    </div>
+</div>
+
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                <a href="UTILS.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page: utils">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"Demo app","level":"3.1","depth":1,"previous":{"title":"utils","level":"2.5","depth":1,"path":"UTILS.md","ref":"UTILS.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"DEMOAPP.md","mtime":"2018-02-12T20:14:12.204Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-02-12T20:14:35.358Z"},"basePath":".","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    <script src="gitbook/gitbook.js"></script>
+    <script src="gitbook/theme.js"></script>
+    
+        
+        <script src="gitbook/gitbook-plugin-search/search-engine.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-search/search.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-lunr/lunr.min.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-lunr/search-lunr.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-sharing/buttons.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-fontsettings/fontsettings.js"></script>
+        
+    
+
+    </body>
+</html>
+

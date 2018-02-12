@@ -12,3 +12,7 @@
 
 ----
 
+### Examples
+
+* [Demo app](DEMOAPP.md)
+
