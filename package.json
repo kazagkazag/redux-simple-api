@@ -1,6 +1,6 @@
 {
     "name": "redux-simple-api",
-    "version": "0.2.2",
+    "version": "0.2.3",
     "description": "",
     "main": "dist/index.js",
     "scripts": {
@@ -16,10 +16,7 @@
     "author": "Kamil Zagrabski",
     "license": "ISC",
     "types": "./index.d.ts",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/kazagkazag/redux-simple-api"
-    },
+    "repository": "kazagkazag/redux-simple-api",
     "dependencies": {
         "axios": "0.16.1",
         "redux": "3.6.0",
