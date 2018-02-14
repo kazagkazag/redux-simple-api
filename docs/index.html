@@ -244,6 +244,23 @@ required to handle asynchronous actions. You can mitigate it using
 <code>redux-thunk</code> and <code>redux-simple-api</code>.</p>
 <p><code>rsa</code> libary can be used with any redux-compatible view library, but it was
 tested only with React.</p>
+<h2 id="the-issue">The issue</h2>
+<p>Main issue with redux is amount of code you have to write to handle simple request.
+If you wan&apos;t to fetch any data from your backend using redux and redux-thunk, you have to
+do several things:</p>
+<ol>
+<li>Create action types for three actions: action dispatched when request is sending, 
+action after successful response and action dispatched when something went wrong.</li>
+<li>Create action creators and pretty complicated request action.</li>
+<li>Create reducers, that will store information about pending request and possible responses.
+Moreover, you have to create many actions, because probably your app will communicate
+with backend a lot. That&apos;s a lot of duplication...</li>
+</ol>
+<h2 id="the-solution">The solution</h2>
+<p>One simple solution for that issue is standarization. <code>RSA</code> provide consistent way to handle
+all requests in entire application. You can build complicated chain of actions and collect data from them
+with ease. Every reducer will work in the same way, every request will dispatch the same set of actions.
+No duplication, no place for errors.</p>
 <h2 id="installation">Installation</h2>
 <p>You can install <code>redux-simple-api</code> using npm:</p>
 <pre><code>npm install --save-dev redux-simple-api
@@ -292,7 +309,7 @@ application.</li>
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Introduction","level":"1.1","depth":1,"next":{"title":"init","level":"2.1","depth":1,"path":"INIT.md","ref":"INIT.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"README.md","mtime":"2018-02-12T19:44:00.685Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-02-12T20:14:35.358Z"},"basePath":".","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Introduction","level":"1.1","depth":1,"next":{"title":"init","level":"2.1","depth":1,"path":"INIT.md","ref":"INIT.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"README.md","mtime":"2018-02-14T20:28:14.387Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-02-14T20:33:06.306Z"},"basePath":".","book":{"language":""}});
         });
     </script>
 </div>
