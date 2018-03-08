@@ -1,5 +1,5 @@
 // @flow
-export function createInitialRemoteResource() {
+export default function createInitialRemoteResource() {
     return {
         done: false,
         pending: false,
