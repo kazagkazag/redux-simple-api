@@ -148,19 +148,20 @@ describe("buildReducers", () => {
             }
         });
         const expected = {
-            pending: 1,
-            done: 2,
-            data: 3,
-            error: 4
+            pending: "my/action/reset",
+            done: "my/action",
+            data: "my/action/done",
+            error: "my/action/failed"
         };
 
         const reducerWithCustoms = buildReducers({
             baseType,
+            resetType: "my/action/reset",
             customReducers: {
-                pending: () => 1,
-                done: () => 2,
-                data: () => 3,
-                error: () => 4
+                pending: actionTypes => (state = null) => actionTypes.reset || state,
+                done: actionTypes => (state = null) => actionTypes.start || state,
+                data: actionTypes => (state = null) => actionTypes.success || state,
+                error: actionTypes => (state = null) => actionTypes.error || state
             }
         });
         const received = reducerWithCustoms(undefined, getStartAction());

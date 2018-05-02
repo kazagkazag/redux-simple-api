@@ -22,16 +22,16 @@ export default function buildReducers(options: {
 
     return combineReducers({
         pending: customReducers.pending
-            ? customReducers.pending
+            ? customReducers.pending(actionTypes)
             : getPendingReducer(actionTypes),
         done: customReducers.done
-            ? customReducers.done
+            ? customReducers.done(actionTypes)
             : getDoneReducer(actionTypes),
         error: customReducers.error
-            ? customReducers.error
+            ? customReducers.error(actionTypes)
             : getErrorReducer(actionTypes),
         data: customReducers.data
-            ? customReducers.data
+            ? customReducers.data(actionTypes)
             : getDataReducer(actionTypes)
     });
 }
