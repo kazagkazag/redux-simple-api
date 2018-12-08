@@ -60,6 +60,33 @@ describe("request", () => {
             });
     });
 
+    test("calls with custom httpClient", () => {
+        const httpClient = {
+            request: jest.fn(() => Promise.resolve(true))
+        };
+        const storeWithCustomHttpClient = configureMockStore(
+            [thunk.withExtraArgument({ httpClient })]
+        )({});
+        const actionCreator = () => request({
+            baseType,
+            url: "/test",
+            baseURL: host
+        });
+
+        return storeWithCustomHttpClient
+            .dispatch(actionCreator())
+            .then(() => {
+                expect(httpClient.request).toHaveBeenCalledWith({
+                    baseURL: "http://localhost",
+                    data: undefined,
+                    headers: undefined,
+                    method: "get",
+                    params: undefined,
+                    url: "/test"
+                });
+            });
+    });
+
     test("calls start action and fail action", () => {
         nock(host)
             .get("/test")
@@ -103,9 +130,8 @@ describe("request", () => {
             baseURL: host
         });
 
-        const combinedActions = () => dispatch =>
-            dispatch(actionCreator())
-                .then(() => dispatch(nextActionCreator()));
+        const combinedActions = () => dispatch => dispatch(actionCreator())
+            .then(() => dispatch(nextActionCreator()));
 
         return store
             .dispatch(combinedActions())
@@ -143,9 +169,8 @@ describe("request", () => {
             baseURL: host
         });
 
-        const combinedActions = () => dispatch =>
-            dispatch(actionCreator())
-                .catch(() => dispatch(nextActionCreator()));
+        const combinedActions = () => dispatch => dispatch(actionCreator())
+            .catch(() => dispatch(nextActionCreator()));
 
         return store
             .dispatch(combinedActions())

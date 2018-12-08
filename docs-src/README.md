@@ -35,8 +35,10 @@ You can install `redux-simple-api` using npm:
 npm install --save-dev redux-simple-api
 ```
 
+**Make sure that redux and redux-thunk are also installed.**
+
 ## Usage
 
-* If you don't know how to start, jump to [Example](/example) chapter to see real life code with simple
+* If you don't know how to start, jump to [Example](/DEMOAPP.md) chapter to see real life code with simple
 application.
 * If you are looking for documentation details, read `Api` section below.

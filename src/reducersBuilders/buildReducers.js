@@ -79,7 +79,7 @@ function getDoneReducer(actionTypes) {
 
 function getErrorReducer(actionTypes) {
     return (state = null, action) => {
-        const errorTransformation = rsaConfig.get().errorTransformation;
+        const { errorTransformation } = rsaConfig.get();
 
         switch (action.type) {
             case actionTypes.error:
@@ -96,7 +96,7 @@ function getErrorReducer(actionTypes) {
 
 function getDataReducer(actionTypes) {
     return (state = null, action) => {
-        const dataTransformation = rsaConfig.get().dataTransformation;
+        const { dataTransformation } = rsaConfig.get();
 
         switch (action.type) {
             case actionTypes.success:

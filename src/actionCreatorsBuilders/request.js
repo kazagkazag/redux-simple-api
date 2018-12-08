@@ -29,7 +29,7 @@ export default function request(requestConfig: {
         errorSuffix
     });
 
-    return (dispatch: Function, getState: Function) => {
+    return (dispatch: Function, getState: Function, config: Object) => {
         dispatch(actions.start());
 
         const requestId = shortid.generate();
@@ -39,21 +39,23 @@ export default function request(requestConfig: {
         }
 
         const defaultErrorHandler = error => dispatch(actions.error(error));
-        const defaultSuccessHandler = response =>
-            dispatch(actions.success(
-                transformData(response.data), response.status
-            ));
+        const defaultSuccessHandler = response => dispatch(actions.success(
+            transformData(response.data), response.status
+        ));
 
         const successHandler = takeLatest
             ? getSuccessHandler(defaultSuccessHandler, requestId, baseType)
             : defaultSuccessHandler;
 
-        const customErrorHandler = error =>
-            rsaConfig.get().onError.call(null, error, dispatch, getState);
+        const customErrorHandler = error => rsaConfig
+            .get()
+            .onError.call(null, error, dispatch, getState);
 
         const transformedConfig = rsaConfig.get().beforeRequest(axiosConfig, dispatch, getState);
 
-        return axios
+        const httpClient = config && config.httpClient ? config.httpClient : axios;
+
+        return httpClient
             .request(transformedConfig)
             .then(response => rsaConfig.get().onSuccess(response, dispatch, getState))
             .then(successHandler)
@@ -114,8 +116,8 @@ function getDefaultBaseURL(): string {
 }
 
 function getErrorHandler(promisifyError: boolean,
-                         defaultErrorHandler: Function,
-                         customErrorHandler: Function) {
+    defaultErrorHandler: Function,
+    customErrorHandler: Function) {
     return promisifyError
         ? function returnError(error: Object) {
             const handledError = customErrorHandler(error);
@@ -129,8 +131,8 @@ function getErrorHandler(promisifyError: boolean,
 }
 
 function getSuccessHandler(defaultSuccessHandler: Function,
-                           requestId: string,
-                           requestBaseType: string): Function {
+    requestId: string,
+    requestBaseType: string): Function {
     return function handleLatestResponse(response) {
         return queue[requestBaseType] === requestId
             ? defaultSuccessHandler(response)

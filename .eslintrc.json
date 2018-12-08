@@ -7,6 +7,7 @@
         "import",
         "flowtype"
     ],
+    "parser": "babel-eslint",
     "rules": {
         "quotes": [
             "error",

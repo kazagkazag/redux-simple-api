@@ -20,11 +20,9 @@ module.exports = {
             }
         ]
     },
-    plugins: [
-        new webpack.optimize.UglifyJsPlugin({
-            sourceMap: "base"
-        })
-    ],
+    optimization: {
+        minimize: true
+    },
     externals: {
         axios: "axios",
         shortid: "shortid",

@@ -12,6 +12,10 @@
 
 ----
 
+### Unit tests
+
+* [How to test redux simple api?](UNITTESTS.md)
+
 ### Examples
 
 * [Demo app](DEMOAPP.md)
